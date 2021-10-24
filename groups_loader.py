@@ -21,35 +21,56 @@ if not checkfile(problem):
 
 print(f"reading {problem}")
 
+# extract info from xml
 tree = ET.parse(problem)
-tests = tree.getroot().findall(".//testset[@name='tests']/tests")[0]
+testset = tree.getroot().findall(".//testset[@name='tests']")[0]
+tests = testset.find("./tests")
+groups = testset.find("./groups") or []
+
+# tests_info = [(group_number, points_per_test)]
+tests_info = [
+    (int(t.attrib.get("group", 0)), t.attrib.get("points")) for t in tests
+]
+# groups_points_policy = {(group_number, points-policy)}
+groups_points_policy = {
+    int(g.attrib["name"]): g.attrib["points-policy"] for g in groups
+}
 
 dic = {}
+# find tests for every group
+for test_ind, (test_group, test_points) in enumerate(tests_info):
+    if test_group not in dic:
+        dic[test_group] = set()
+    dic[test_group].add(test_ind)
 
-
-def add(group, points):
-    # NEW CODE: add support for points=None
-    if not dic.get(group):
-        dic[group] = [float(points) if points is not None else None, 1]
+# regroup using groups points policy
+new_dic = {}
+for group, tests in dic.items():
+    if (
+        group > 0
+        and group in groups_points_policy
+        and groups_points_policy[group] == "each-test"
+    ):
+        for test in tests:
+            new_dic[len(new_dic)] = {test}
     else:
-        if points is not None:
-            dic[group][0] += float(points)
-        dic[group][1] += 1
+        new_dic[len(new_dic)] = tests
+dic = new_dic
 
+# calculate points for every group
+new_dic = {}
+for group, tests in dic.items():
+    points = (
+        sum(float(tests_info[t][1]) for t in tests)
+        if all(tests_info[t][1] is not None for t in tests)
+        else None
+    )
+    new_dic[group] = [points, len(tests)]
+dic = new_dic
 
-for test in tests:
-    # add(i.attrib['group'], i.attrib['points'])
-    # use group=0 if there is no word "group" in xml file
-    group = test.attrib["group"] if "group" in test.attrib else "0"
-    # use points=None if there is no word "points" in xml file
-    points = test.attrib["points"] if "points" in test.attrib else None
-    add(group, points)
-
-
-# read points from "task.cfg"
-# format: GROUP1_POINTS = points_for_group_1 points_for_group_2 ...
-XML_IS_OLD = any(group_info[0] is None for group_info in dic.values())
-if XML_IS_OLD:
+# read points from "task.cfg" if some points are None
+# format: GROUP1_POINTS = points_for_group_1 points_for_group_2 points_for_group_3 ...
+if any(group_info[0] is None for group_info in dic.values()):
     with open("task.cfg") as cfg:
         cfg = cfg.read().split("\n")
         GROUP1_POINTS = next(
@@ -59,7 +80,6 @@ if XML_IS_OLD:
     for group, group_info in dic.items():
         if group_info[0] is None:
             group_info[0] = float(points_for_groups.pop(0))
-
 
 total = float(0)
 for group, (points, tests) in dic.items():
@@ -91,17 +111,15 @@ if not lines[-2].startswith("NEW_GROUP"):
     lines.insert(-1, "NEW_GROUP = 1\n")
 
 i = 0
-while dic.get(str(i)):
-    points, tests = dic[str(i)]
+while dic.get(i):
+    points, tests = dic[i]
     for j in range(tests - 1):
         lines.append("-1\n")
     lines.append(str(int(round(points))) + "\n")
     i += 1
-
 lines += lines_end
 
 print("rewriting task.cfg")
-
 with open("task.cfg", "w") as f:
     for line in lines:
         f.write(line)
