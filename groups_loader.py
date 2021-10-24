@@ -28,12 +28,13 @@ tests = testset.find("./tests")
 groups = testset.find("./groups") or []
 
 # tests_info = [(group_number, points_per_test)]
-tests_info = [
-    (int(t.attrib.get("group", 0)), t.attrib.get("points")) for t in tests
-]
-# groups_points_policy = {(group_number, points-policy)}
+tests = [(t.attrib.get("group", 0), t.attrib.get("points")) for t in tests]
+tests_info = [(0 if g == "samples" else int(g), p) for g, p in tests]
+
+# groups_points_policy = {group_number: points-policy}
+gs = {g.attrib["name"]: g.attrib["points-policy"] for g in groups}
 groups_points_policy = {
-    int(g.attrib["name"]): g.attrib["points-policy"] for g in groups
+    (0 if g == "samples" else int(g)): v for g, v in gs.items()
 }
 
 dic = {}
