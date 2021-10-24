@@ -11,84 +11,103 @@ def checkfile(file):
     return True
 
 
-if not checkfile("task.cfg"):
+def read_groups_xml(filename):
+    if not os.path.isfile(filename):
+        return None
+
+    # g2i converts group name to group number
+    def g2i(group_name):
+        if group_name == "samples":
+            return 0
+        return int(group_name)
+
+    # parse xml
+    xml_tree = ET.parse(filename)
+    testset = xml_tree.getroot().findall(".//testset[@name='tests']")[0]
+    tests = testset.find("./tests")
+    groups = testset.find("./groups") or []
+
+    # define tests_info = [(group_number, points_per_test)]
+    tests = [(t.attrib.get("group", 0), t.attrib.get("points")) for t in tests]
+    tests_info = [(g2i(g), p) for g, p in tests]
+
+    # define groups_points_policy = {group_number: points-policy}
+    gs = {g.attrib["name"]: g.attrib["points-policy"] for g in groups}
+    groups_points_policy = {g2i(g): v for g, v in gs.items()}
+
+    # define groups_dependencies = {group_number: dependencies}
+    groups_dependencies = dict()
+    for g in groups:
+        group_name = g.attrib["name"]
+        group_number = 0 if group_name == "samples" else int(group_name)
+        groups_dependencies[group_number] = set()
+        for dependencies in (
+            child for child in g if child.tag == "dependencies"
+        ):
+            for dependency in dependencies:
+                dependency_group_name = dependency.attrib["group"]
+                dependency_group_number = (
+                    0
+                    if dependency_group_name == "samples"
+                    else int(dependency_group_name)
+                )
+                groups_dependencies[group_number].add(dependency_group_number)
+
+    # find tests for every group
+    dic = {}
+    for test_ind, (test_group, test_points) in enumerate(tests_info):
+        if test_group not in dic:
+            dic[test_group] = set()
+        dic[test_group].add(test_ind)
+
+    # regroup using groups points policy
+    new_dic = {}
+    for group, tests in dic.items():
+        if (
+            group > 0
+            and group in groups_points_policy
+            and groups_points_policy[group] == "each-test"
+        ):
+            for test in tests:
+                new_dic[len(new_dic)] = {test}
+            # raise exception if dependencies are broken after regroup
+            if sum(len(deps) for deps in groups_dependencies.values()) > 0:
+                raise Exception(
+                    '"each-test" policy is not compatible with group dependencies'
+                )
+        else:
+            new_dic[len(new_dic)] = tests
+    dic = new_dic
+
+    # calculate points for every group
+    new_dic = {}
+    for group, tests in dic.items():
+        points = (
+            sum(float(tests_info[t][1]) for t in tests)
+            if all(tests_info[t][1] is not None for t in tests)
+            else None
+        )
+        new_dic[group] = [points, len(tests)]
+    dic = new_dic
+    return (dic, groups_dependencies)
+
+
+# read groups from xml
+dic = read_groups_xml("problem.xml")
+if dic is None:
+    print("problem.xml not found")
+dic = read_groups_xml("problem.xml.polygon") if dic is None else dic
+if dic is None:
+    print("problem.xml.polygon not found")
+
+if dic is None:
+    print("error reading groups info from xml files")
     exit(1)
-if not checkfile(problem):
-    problem += ".polygon"
-if not checkfile(problem):
-    print("error reading xml")
+dic, groups_dependencies = dic
+
+if not os.path.isfile("task.cfg"):
+    print("error reading task.cfg: no such file")
     exit(1)
-
-print(f"reading {problem}")
-
-# extract info from xml
-tree = ET.parse(problem)
-testset = tree.getroot().findall(".//testset[@name='tests']")[0]
-tests = testset.find("./tests")
-groups = testset.find("./groups") or []
-
-# tests_info = [(group_number, points_per_test)]
-tests = [(t.attrib.get("group", 0), t.attrib.get("points")) for t in tests]
-tests_info = [(0 if g == "samples" else int(g), p) for g, p in tests]
-
-# groups_points_policy = {group_number: points-policy}
-gs = {g.attrib["name"]: g.attrib["points-policy"] for g in groups}
-groups_points_policy = {
-    (0 if g == "samples" else int(g)): v for g, v in gs.items()
-}
-
-# groups_dependencies = {group_number: dependencies}
-groups_dependencies = dict()
-for g in groups:
-    group_name = g.attrib["name"]
-    group_number = 0 if group_name == "samples" else int(group_name)
-    groups_dependencies[group_number] = set()
-    for dependencies in (child for child in g if child.tag == "dependencies"):
-        for dependency in dependencies:
-            dependency_group_name = dependency.attrib["group"]
-            dependency_group_number = (
-                0
-                if dependency_group_name == "samples"
-                else int(dependency_group_name)
-            )
-            groups_dependencies[group_number].add(dependency_group_number)
-
-dic = {}
-# find tests for every group
-for test_ind, (test_group, test_points) in enumerate(tests_info):
-    if test_group not in dic:
-        dic[test_group] = set()
-    dic[test_group].add(test_ind)
-
-# regroup using groups points policy
-new_dic = {}
-for group, tests in dic.items():
-    if (
-        group > 0
-        and group in groups_points_policy
-        and groups_points_policy[group] == "each-test"
-    ):
-        for test in tests:
-            new_dic[len(new_dic)] = {test}
-        # raise exception if dependencies are broken after regroup
-        if sum(len(deps) for deps in groups_dependencies.values()) > 0:
-            raise Exception(
-                '"each-test" policy is not compatible with group dependencies'
-            )
-    else:
-        new_dic[len(new_dic)] = tests
-dic = new_dic
-
-# calculate points for every group
-new_dic = {}
-for group, tests in dic.items():
-    points = (
-        sum(float(tests_info[t][1]) for t in tests)
-        if all(tests_info[t][1] is not None for t in tests)
-        else None
-    )
-    new_dic[group] = [points, len(tests)]
-dic = new_dic
 
 # read points from "task.cfg" if some points are None
 # format: GROUP1_POINTS = points_for_group_1 points_for_group_2 points_for_group_3 ...
