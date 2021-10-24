@@ -37,6 +37,22 @@ groups_points_policy = {
     (0 if g == "samples" else int(g)): v for g, v in gs.items()
 }
 
+# groups_dependencies = {group_number: dependencies}
+groups_dependencies = dict()
+for g in groups:
+    group_name = g.attrib["name"]
+    group_number = 0 if group_name == "samples" else int(group_name)
+    groups_dependencies[group_number] = set()
+    for dependencies in (child for child in g if child.tag == "dependencies"):
+        for dependency in dependencies:
+            dependency_group_name = dependency.attrib["group"]
+            dependency_group_number = (
+                0
+                if dependency_group_name == "samples"
+                else int(dependency_group_name)
+            )
+            groups_dependencies[group_number].add(dependency_group_number)
+
 dic = {}
 # find tests for every group
 for test_ind, (test_group, test_points) in enumerate(tests_info):
@@ -54,6 +70,11 @@ for group, tests in dic.items():
     ):
         for test in tests:
             new_dic[len(new_dic)] = {test}
+        # raise exception if dependencies are broken after regroup
+        if sum(len(deps) for deps in groups_dependencies.values()) > 0:
+            raise Exception(
+                '"each-test" policy is not compatible with group dependencies'
+            )
     else:
         new_dic[len(new_dic)] = tests
 dic = new_dic
@@ -88,6 +109,13 @@ for group, (points, tests) in dic.items():
     total += points
 print(f"total points: {total}")
 
+if sum(len(deps) for deps in groups_dependencies.values()) > 0:
+    print("\n -- DEPENDENCIES --")
+    for group, deps in groups_dependencies.items():
+        deps = ", ".join(str(d) for d in deps) if deps else "no dependencies"
+        print(f"group #{group}:\t{deps}")
+    print()
+
 if os.path.isfile("task.cfg.old"):
     print("found old task.cfg, copying skipped")
 else:
@@ -119,6 +147,34 @@ while dic.get(i):
     lines.append(str(int(round(points))) + "\n")
     i += 1
 lines += lines_end
+
+# find DEPS_BEGIN and DEPS_END in task.cfg
+deps_start = deps_end = 0
+while (
+    deps_start < len(lines)
+    and lines[deps_start].lower().strip() != "deps_begin"
+):
+    deps_start += 1
+if deps_start < len(lines):
+    deps_end = deps_start
+    while (
+        deps_end < len(lines) and lines[deps_end].lower().strip() != "deps_end"
+    ):
+        deps_end += 1
+if not (deps_start < deps_end < len(lines)):
+    deps_start = len(lines)
+    deps_end = deps_start + 1
+    if sum(len(deps) for deps in groups_dependencies.values()) > 0:
+        lines += ["deps_begin\n", "deps_end\n"]
+cfg_deps = []
+
+# add dependencies to task.cfg
+if sum(len(deps) for deps in groups_dependencies.values()) > 0:
+    for group, deps in groups_dependencies.items():
+        if deps:
+            deps = " ".join(str(d) for d in deps)
+            cfg_deps.append(f"{group}: {deps}\n")
+    lines[(deps_start + 1) : deps_end] = cfg_deps
 
 print("rewriting task.cfg")
 with open("task.cfg", "w") as f:
