@@ -92,16 +92,49 @@ def read_groups_xml(filename):
     return (dic, groups_dependencies)
 
 
-# read groups from xml
+def read_groups_cfg(filename):
+    # read group info in format
+    # <
+    # group_1_points, group_1_tests
+    # group_2_points, group_2_tests
+    # ...
+    # >
+    if not os.path.isfile(filename):
+        return None
+    with open(filename, "rt") as cfg:
+        lines = cfg.read().strip().split("\n")
+
+    # find "<" and ">"
+    info_start = info_end = 0
+    while info_start < len(lines) and lines[info_start].strip() != "<":
+        info_start += 1
+    info_end = info_start + 1
+    while info_end < len(lines) and lines[info_end].strip() != ">":
+        info_end += 1
+    if not (info_start < info_end < len(lines)):
+        return None
+
+    # read groups
+    dic = {}
+    for i, line in enumerate(lines[(info_start + 1) : info_end]):
+        dic[i] = tuple(map(int, line.strip().split(",")))
+    return (dic, {})
+
+
+# try to read groups from xml
 dic = read_groups_xml("problem.xml")
 if dic is None:
     print("problem.xml not found")
 dic = read_groups_xml("problem.xml.polygon") if dic is None else dic
 if dic is None:
     print("problem.xml.polygon not found")
+# else: read groups from tester.cfg
+dic = read_groups_cfg("tester.cfg") if dic is None else dic
+if dic is None:
+    print("tester.cfg not found")
 
 if dic is None:
-    print("error reading groups info from xml files")
+    print("error reading groups info from xml/cfg files")
     exit(1)
 dic, groups_dependencies = dic
 
