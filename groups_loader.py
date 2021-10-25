@@ -61,7 +61,7 @@ def read_groups_xml(filename):
         dic[test_group].add(test_ind)
 
     # regroup using groups points policy
-    new_dic = {}
+    new_dic, o2n = {}, {}
     for group, tests in dic.items():
         if (
             group > 0
@@ -69,6 +69,7 @@ def read_groups_xml(filename):
             and groups_points_policy[group] == "each-test"
         ):
             for test in tests:
+                o2n.setdefault(group, set()).add(len(new_dic))
                 new_dic[len(new_dic)] = {test}
             # raise exception if dependencies are broken after regroup
             if sum(len(deps) for deps in groups_dependencies.values()) > 0:
@@ -76,6 +77,7 @@ def read_groups_xml(filename):
                     '"each-test" policy is not compatible with group dependencies'
                 )
         else:
+            o2n[group] = {len(new_dic)}
             new_dic[len(new_dic)] = tests
     dic = new_dic
 
