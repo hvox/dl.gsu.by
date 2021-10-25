@@ -71,15 +71,17 @@ def read_groups_xml(filename):
             for test in tests:
                 o2n.setdefault(group, set()).add(len(new_dic))
                 new_dic[len(new_dic)] = {test}
-            # raise exception if dependencies are broken after regroup
-            if sum(len(deps) for deps in groups_dependencies.values()) > 0:
-                raise Exception(
-                    '"each-test" policy is not compatible with group dependencies'
-                )
         else:
             o2n[group] = {len(new_dic)}
             new_dic[len(new_dic)] = tests
     dic = new_dic
+
+    # recalculate group dependencies
+    new_deps = {}
+    for old_group, deps in groups_dependencies.items():
+        for group in o2n[old_group]:
+            new_deps[group] = {g for d in deps for g in o2n[d]}
+    groups_dependencies = new_deps
 
     # calculate points for every group
     new_dic = {}
