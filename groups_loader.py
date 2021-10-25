@@ -82,6 +82,21 @@ def read_groups_from_testset_with_tests(testset):
     dic = new_dic
     return (dic, groups_dependencies)
 
+def read_groups_from_testset_with_groups(testset):
+    # g2i converts group name to group number
+    def g2i(group_name):
+        if group_name.lower() in ("samples", "0. sample tests"):
+            return 0
+        return int(group_name)
+
+    groups, groups_dependencies = {}, {}
+    for group_info in testset:
+        i = g2i(group_info.attrib['comment'])
+        points = int(group_info.attrib['group-bonus'])
+        deps = set(map(int, group_info.attrib['require-groups'].split()))
+        groups[i] = (points, len(group_info))
+        groups_dependencies[i] = (deps | {0}) - {i}
+    return groups, groups_dependencies
 
 def read_groups_xml(filename):
     if not os.path.isfile(filename):
@@ -90,6 +105,9 @@ def read_groups_xml(filename):
     testsets = xml_tree.getroot().findall(".//testset[@name='tests']")
     if testsets:
         return read_groups_from_testset_with_tests(testsets[0])
+    testsets = xml_tree.getroot().findall(".//testset[@name='main']")
+    if testsets:
+        return read_groups_from_testset_with_groups(testsets[0])
     else:
         raise Exception("error: no testset with tests was found")
 
