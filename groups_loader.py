@@ -4,26 +4,13 @@ import os
 problem = "problem.xml"
 
 
-def checkfile(file):
-    if not os.path.isfile(file):
-        print(f"{file} not found")
-        return False
-    return True
-
-
-def read_groups_xml(filename):
-    if not os.path.isfile(filename):
-        return None
-
+def read_groups_from_testset_with_tests(testset):
     # g2i converts group name to group number
     def g2i(group_name):
         if group_name == "samples":
             return 0
         return int(group_name)
 
-    # parse xml
-    xml_tree = ET.parse(filename)
-    testset = xml_tree.getroot().findall(".//testset[@name='tests']")[0]
     tests = testset.find("./tests")
     groups = testset.find("./groups") or []
 
@@ -94,6 +81,17 @@ def read_groups_xml(filename):
         new_dic[group] = [points, len(tests)]
     dic = new_dic
     return (dic, groups_dependencies)
+
+
+def read_groups_xml(filename):
+    if not os.path.isfile(filename):
+        return None
+    xml_tree = ET.parse(filename)
+    testsets = xml_tree.getroot().findall(".//testset[@name='tests']")
+    if testsets:
+        return read_groups_from_testset_with_tests(testsets[0])
+    else:
+        raise Exception("error: no testset with tests was found")
 
 
 def read_groups_cfg(filename):
