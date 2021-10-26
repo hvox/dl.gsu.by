@@ -1,6 +1,6 @@
 import xml.etree.ElementTree as ET
 from collections import namedtuple, defaultdict
-import os
+from pathlib import Path
 
 # g2i converts group name to group number
 g2i = lambda g: 0 if g == "samples" or g is None else int(g.split(".")[0])
@@ -42,10 +42,10 @@ def read_groups_from_testset_with_groups(testset):
     return groups
 
 
-def read_groups_xml(filename):
-    if not os.path.isfile(filename):
+def read_groups_xml(path):
+    if not path.is_file():
         return None
-    xml_tree = ET.parse(filename)
+    xml_tree = ET.parse(path)
     tsts = xml_tree.getroot().findall(".//testset[@name='tests']")
     grps = xml_tree.getroot().findall(".//testset[@name='main']")
     groups = read_groups_from_testset_with_tests(tsts[0]) if tsts else None
@@ -55,16 +55,16 @@ def read_groups_xml(filename):
     return groups
 
 
-def read_groups_cfg(filename):
+def read_groups_cfg(path):
     # read group info in format
     # <
     # group_1_points, group_1_tests
     # group_2_points, group_2_tests
     # ...
     # >
-    if not os.path.isfile(filename):
+    if not path.is_file():
         return None
-    with open(filename, "rt") as cfg:
+    with path.open("r") as cfg:
         lines = [l.strip() for l in cfg.read().strip().split("\n")]
     info_start, info_end, groups = lines.index("<"), lines.index(">"), {}
     for i, line in enumerate(lines[(info_start + 1) : info_end]):
@@ -73,10 +73,10 @@ def read_groups_cfg(filename):
     return groups
 
 
-sources = ["problem.xml", "problem.xml.polygon", "tester.cfg"]
+sources = map(Path, ("problem.xml", "problem.xml.polygon", "tester.cfg"))
 for s in sources:
     print(f"reading {s}...")
-    groups = read_groups_xml(s) if s.endswith(".xml") else read_groups_cfg(s)
+    groups = read_groups_xml(s) if s.suffix == ".xml" else read_groups_cfg(s)
     if groups:
         break
     print(f"{s} not found")
@@ -84,7 +84,7 @@ else:
     print("error reading groups info from xml/cfg files")
     exit(1)
 
-if not os.path.isfile("task.cfg"):
+if not Path("task.cfg").is_file():
     print("error reading task.cfg: no such file")
     exit(1)
 
@@ -125,11 +125,11 @@ if any(len(deps) for (_, deps, _) in groups.values()):
         print(f"group #{i}:\t{deps}")
     print()
 
-if os.path.isfile("task.cfg.old"):
+if Path("task.cfg.old").is_file():
     print("found old task.cfg, copying skipped")
 else:
     print("making a copy of task.cfg")
-    os.system("copy task.cfg task.cfg.old")
+    Path("task.cfg.old").write_text(Path("task.cfg").read_text())
 
 lines = []
 lines_end = []
