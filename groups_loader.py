@@ -35,6 +35,7 @@ def read_groups_from_testset_with_groups(testset):
     for i, group in groups_info.items():
         points = int(group.attrib["group-bonus"])
         tests = [Test(i, t.attrib.get("points")) for i, t in enumerate(group)]
+        points = points if any(t.points is None for t in tests) else "sum"
         tests = [Test(i, int(p) if p else None) for i, p in tests]
         deps = set(map(int, group.attrib["require-groups"].split()))
         groups[i] = Group(points, (deps | {0}) - {i}, tests)
