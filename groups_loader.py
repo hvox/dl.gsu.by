@@ -66,6 +66,7 @@ def read_groups_cfg(path):
     # or in format:
     # TESTS_BEGIN
     # -1
+    # -0
     # 42
     # ...
     # TESTS_END
@@ -76,11 +77,11 @@ def read_groups_cfg(path):
     if '>' not in lines:
         info_start, info_end, groups = lines.index("tests_begin"), lines.index("tests_end"), {}
         tests = 1
-        for i, line in enumerate(lines[(info_start + 1) : info_end]):
-            points = int(line)
-            if points >= 0:
-                groups[len(groups)] = Group(None if points else 0, {}, [Test(None, None) for _ in range(tests)])
-            tests = tests + 1 if points < 0 else 1
+        for i, points in enumerate(lines[(info_start + 1) : info_end]):
+            if not points.startswith('-'):
+                groups[len(groups)] = Group(None if int(points) else 0, {}, [Test(None, None) for _ in range(tests)])
+                tests = 0
+            tests += 1
         return groups
     info_start, info_end, groups = lines.index("<"), lines.index(">"), {}
     for i, line in enumerate(lines[(info_start + 1) : info_end]):
