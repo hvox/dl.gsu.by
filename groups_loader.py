@@ -56,24 +56,40 @@ def read_groups_xml(path):
 
 
 def read_groups_cfg(path):
-    # read group info in format
+    # read group info in format:
     # <
     # group_1_points, group_1_tests
     # group_2_points, group_2_tests
     # ...
     # >
+    #
+    # or in format:
+    # TESTS_BEGIN
+    # -1
+    # 42
+    # ...
+    # TESTS_END
     if not path.is_file():
         return None
     with path.open("r") as cfg:
-        lines = [l.strip() for l in cfg.read().strip().split("\n")]
+        lines = [l.strip().lower() for l in cfg.read().strip().split("\n")]
+    if '>' not in lines:
+        info_start, info_end, groups = lines.index("tests_begin"), lines.index("tests_end"), {}
+        tests = 1
+        for i, line in enumerate(lines[(info_start + 1) : info_end]):
+            points = int(line)
+            if points >= 0:
+                groups[len(groups)] = Group(None if points else 0, {}, [Test(None, None) for _ in range(tests)])
+            tests = tests + 1 if points < 0 else 1
+        return groups
     info_start, info_end, groups = lines.index("<"), lines.index(">"), {}
     for i, line in enumerate(lines[(info_start + 1) : info_end]):
-        points, tests = line.strip().split(",")
+        points, tests = map(int, line.strip().split(","))
         groups[i] = Group(points, {}, [Test(None, None) for _ in range(tests)])
     return groups
 
 
-sources = map(Path, ("problem.xml", "problem.xml.polygon", "tester.cfg"))
+sources = map(Path, ("problem.xml", "problem.xml.polygon", "tester.cfg", "task.cfg"))
 for s in sources:
     print(f"reading {s}...")
     groups = read_groups_xml(s) if s.suffix == ".xml" else read_groups_cfg(s)
