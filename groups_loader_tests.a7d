@@ -1,0 +1,286 @@
+a7d8473
+/dependencies/
+:problem.xml/
+<problem>
+	<judging>
+		<testset name="tests">
+			<tests>
+				<test group="samples" points="0.0" sample="true"/>
+				<test group="samples" points="0.0" sample="true"/>
+				<test group="samples" points="0.0" sample="true"/>
+				<test group="1" points="3.0"/>
+				<test group="1" points="0.0"/>
+				<test group="1" points="0.0"/>
+				<test group="1" points="0.0"/>
+				<test group="1" points="0.0"/>
+				<test group="1" points="0.0"/>
+				<test group="1" points="0.0"/>
+				<test group="1" points="0.0"/>
+				<test group="2" points="23.0"/>
+				<test group="2" points="0.0"/>
+				<test group="2" points="0.0"/>
+				<test group="2" points="0.0"/>
+				<test group="2" points="0.0"/>
+				<test group="2" points="0.0"/>
+				<test group="2" points="0.0"/>
+				<test group="2" points="0.0"/>
+				<test group="2" points="0.0"/>
+				<test group="2" points="0.0"/>
+				<test group="2" points="0.0"/>
+				<test group="2" points="0.0"/>
+				<test group="2" points="0.0"/>
+				<test group="2" points="0.0"/>
+				<test group="2" points="0.0"/>
+				<test group="2" points="0.0"/>
+				<test group="2" points="0.0"/>
+				<test group="2" points="0.0"/>
+				<test group="3" points="16.0"/>
+				<test group="3" points="0.0"/>
+				<test group="3" points="0.0"/>
+				<test group="3" points="0.0"/>
+				<test group="3" points="0.0"/>
+				<test group="3" points="0.0"/>
+				<test group="3" points="0.0"/>
+				<test group="3" points="0.0"/>
+				<test group="3" points="0.0"/>
+				<test group="3" points="0.0"/>
+				<test group="3" points="0.0"/>
+				<test group="3" points="0.0"/>
+				<test group="3" points="0.0"/>
+				<test group="3" points="0.0"/>
+				<test group="3" points="0.0"/>
+				<test group="3" points="0.0"/>
+				<test group="3" points="0.0"/>
+				<test group="3" points="0.0"/>
+				<test group="3" points="0.0"/>
+				<test group="3" points="0.0"/>
+				<test group="4" points="58.0"/>
+				<test group="4" points="0.0"/>
+				<test group="4" points="0.0"/>
+				<test group="4" points="0.0"/>
+				<test group="4" points="0.0"/>
+				<test group="4" points="0.0"/>
+				<test group="4" points="0.0"/>
+				<test group="4" points="0.0"/>
+				<test group="4" points="0.0"/>
+				<test group="4" points="0.0"/>
+				<test group="4" points="0.0"/>
+				<test group="4" points="0.0"/>
+			</tests>
+			<groups>
+				<group feedback-policy="complete" name="samples" points="0.0" points-policy="complete-group"/>
+				<group feedback-policy="icpc" name="1" points="3.0" points-policy="complete-group">
+					<dependencies>
+						<dependency group="samples"/>
+					</dependencies>
+				</group>
+				<group feedback-policy="icpc" name="2" points="23.0" points-policy="complete-group">
+					<dependencies>
+						<dependency group="1"/>
+						<dependency group="samples"/>
+					</dependencies>
+				</group>
+				<group feedback-policy="icpc" name="3" points="16.0" points-policy="complete-group">
+					<dependencies>
+						<dependency group="samples"/>
+					</dependencies>
+				</group>
+				<group feedback-policy="icpc" name="4" points="58.0" points-policy="complete-group">
+					<dependencies>
+						<dependency group="1"/>
+						<dependency group="2"/>
+						<dependency group="3"/>
+						<dependency group="samples"/>
+					</dependencies>
+				</group>
+			</groups>
+		</testset>
+	</judging>
+</problem>
+~ ~ ~
+:task.cfg/
+CHECKER = ''
+INPUT = con
+OUTPUT = con
+MEM_LIMIT = 321
+TIME_LIMIT = 1
+COUNT_BY = TEST
+message_ok = 'n'
+Group1_points = 3 23 16 58
+NEW_GROUP = 1
+TESTS_BEGIN
+TESTS_END
+DEPS_BEGIN
+DEPS_END
+~ ~ ~
+!test/
+#!/bin/sh
+python3 groups_loader.py
+test "$(cat task.cfg | sha256sum | awk '{print $1;}')" = 9717ce33d0a5a249e93cc078582fb62ba114853d1b06cd5f19542b156b191220
+~ ~ ~
+\
+/each-test-policy/
+:problem.xml/
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<problem>
+    <judging>
+        <testset name="tests">
+            <tests>
+                <test group="0" points="0.0" sample="true"/>
+                <test group="1" points="1.0"/>
+                <test group="1" points="2.0"/>
+                <test group="2" points="3.0"/>
+                <test group="2" points="4.0"/>
+                <test group="2" points="5.0"/>
+            </tests>
+            <groups>
+                <group feedback-policy="complete" name="0" points-policy="each-test"/>
+                <group feedback-policy="complete" name="1" points-policy="each-test"/>
+                <group feedback-policy="complete" name="2" points-policy="each-test"/>
+            </groups>
+        </testset>
+    </judging>
+</problem>
+~ ~ ~
+:task.cfg/
+CHECKER = ''
+INPUT = con
+OUTPUT = con
+MEM_LIMIT = 123
+TIME_LIMIT = 1
+COUNT_BY = TEST
+NEW_GROUP = 1
+TESTS_BEGIN
+TESTS_END
+~ ~ ~
+!test/
+#!/bin/sh
+python3 groups_loader.py
+test "$(cat task.cfg | sha256sum | awk '{print $1;}')" = '777219c4734667567e23198fd5b9251308ba2d4db71424c8b7aae173c53c95d5'
+~ ~ ~
+\
+/read_info_from_tester.cfg/
+:task.cfg/
+CHECKER = ''
+INPUT = con
+OUTPUT = con
+MEM_LIMIT = 42
+TIME_LIMIT = 1
+COUNT_BY = TEST
+message_ok = 'n'
+NEW_GROUP = 1
+TESTS_BEGIN
+TESTS_END
+~ ~ ~
+!test/
+#!/bin/sh
+python3 groups_loader.py
+test "$(cat task.cfg | sha256sum | awk '{print $1;}')" = 0a8f73f05a183283e4e0a1b6dbe80354c46cb6748f51dc80afde461772b86a8f
+~ ~ ~
+:tester.cfg/
+blablabla
+< 
+0, 1
+2, 3
+4, 5
+> 
+~ ~ ~
+\
+/read_info_from_tester.cfg_without_zero_group/
+:task.cfg/
+CHECKER = ''
+INPUT = con
+OUTPUT = con
+MEM_LIMIT = 42
+TIME_LIMIT = 1
+COUNT_BY = TEST
+message_ok = 'n'
+NEW_GROUP = 1
+TESTS_BEGIN
+TESTS_END
+~ ~ ~
+!test/
+#!/bin/sh
+python3 groups_loader.py
+test "$(cat task.cfg | sha256sum | awk '{print $1;}')" = 5ee307a0dee0ed57156235d696ee6ddd3640e5533878b1c13ac4040cad4b255f
+~ ~ ~
+:tester.cfg/
+blablabla
+< 
+1, 2
+3, 4
+> 
+~ ~ ~
+\
+/sum-policy/
+:problem.xml/
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<problem>
+    <judging>
+        <testset name="tests">
+            <tests>
+                <test group="0" points="0.0" sample="true"/>
+                <test group="1" points="1.0"/>
+                <test group="1" points="2.0"/>
+            </tests>
+            <groups>
+                <group feedback-policy="complete" name="0" points-policy="sum"/>
+                <group feedback-policy="complete" name="1" points-policy="sum"/>
+            </groups>
+        </testset>
+    </judging>
+</problem>
+~ ~ ~
+:task.cfg/
+CHECKER = ''
+INPUT = con
+OUTPUT = con
+MEM_LIMIT = 123
+TIME_LIMIT = 1
+COUNT_BY = TEST
+NEW_GROUP = 1
+TESTS_BEGIN
+TESTS_END
+~ ~ ~
+!test/
+#!/bin/sh
+python3 groups_loader.py
+test "$(cat task.cfg | sha256sum | awk '{print $1;}')" = 12eebce0df163173b2a81490382b00ea66eed68117644cb6b14905800abd8a0c
+~ ~ ~
+\
+/xml_polygon/
+:problem.xml.polygon/
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<problem>
+    <judging>
+        <testset name="tests">
+            <tests>
+                <test group="0" points="0.0" sample="true"/>
+                <test group="1" points="1.0"/>
+                <test group="1" points="2.0"/>
+            </tests>
+            <groups>
+                <group feedback-policy="complete" name="0" points-policy="complete-group"/>
+                <group feedback-policy="complete" name="1" points-policy="complete-group"/>
+            </groups>
+        </testset>
+    </judging>
+</problem>
+~ ~ ~
+:task.cfg/
+CHECKER = ""
+INPUT = con
+OUTPUT = con
+MEM_LIMIT = 1073741824
+TIME_LIMIT = 1
+COUNT_BY = TEST
+NEW_GROUP = 1
+TESTS_BEGIN
+TESTS_END
+~ ~ ~
+!test/
+#!/bin/sh
+python3 groups_loader.py
+test "$(cat task.cfg | sha256sum | awk '{print $1;}')" = 1b28ea6441348956029cbf93c2cff375df139dbacc37c09538c9f046e6b1f6d3
+~ ~ ~
+\
