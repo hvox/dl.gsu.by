@@ -92,7 +92,7 @@ def read_groups_cfg(path):
 sources = map(Path, ("problem.xml", "problem.xml.polygon", "tester.cfg", "task.cfg"))
 for s in sources:
     print(f"reading {s}...")
-    groups = read_groups_xml(s) if s.suffix == ".xml" else read_groups_cfg(s)
+    groups = read_groups_xml(s) if s.suffix in [".xml", ".polygon"] else read_groups_cfg(s)
     if groups:
         break
     print(f"{s} not found")
