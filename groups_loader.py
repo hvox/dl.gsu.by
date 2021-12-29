@@ -168,7 +168,10 @@ cfg_deps = []
 for group, (_, deps, _) in groups.items():
     if len(deps) > 0:
         cfg_deps.append(f"{group}: {' '.join(str(d) for d in deps)}\n")
-lines[(deps_beg + 1) : deps_end] = cfg_deps
+if cfg_deps:
+    lines[(deps_beg + 1) : deps_end] = cfg_deps
+else:
+    lines[deps_beg : deps_end + 1] = cfg_deps
 
 print("rewriting task.cfg")
 with open("task.cfg", "w") as f:
