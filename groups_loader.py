@@ -17,7 +17,7 @@ def read_groups_from_testset_with_tests(testset):
             deps = {d for d in groups_info[group] if d.tag == "dependencies"}
             deps = {g2i(d.attrib["group"]) for ds in deps for d in ds}
             each = groups_info[group].attrib["points-policy"] == "each-test"
-            policy = "sum" if each else "all"
+            policy = "all" if not each or group == 0 else "sum"
             groups[group] = Group(points=policy, dependencies=deps, tests=[])
         points = test_info.attrib.get("points")
         points = int(float(points)) if points else None
