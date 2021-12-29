@@ -100,16 +100,15 @@ for i, group in old_groups.items():
         o2n[i].add(len(groups))
         groups[len(groups)] = group
 
-# read points from "task.cfg" if some points are None
-# format: GROUP1_POINTS = points_for_group_1 points_for_group_2 points_for_group_3 ...
-if any(group.points is None for group in groups.values()):
-    with open("task.cfg") as cfg:
-        cfg = cfg.read().split("\n")
-        pts = next(l for l in cfg if l.strip().lower() == "group1_points")
-        points_for_groups = [0] + pts.split("=")[1].strip().split(" ")
-    for i, group in groups.items():
-        if group.points is None:
-            groups[i] = group._replace(points=int(points_for_groups.pop(0)))
+# read points from "task.cfg" if there are any
+# GROUP1_POINTS = points_for_group_1 points_for_group_2 points_for_group_3 ...
+with open("task.cfg") as cfg:
+    cfg = [l.strip().lower() for l in cfg.read().split("\n")]
+    for line in [l for l in cfg if l.startswith('group1_points')]:
+        points_for_groups = line.split("=")[1].strip().split(" ")
+        for i, group in sorted(groups.items()):
+            if group.points is None:
+                groups[i] = group._replace(points=int(points_for_groups.pop(0)))
 
 dic = {i: (pts, len(tests)) for i, (pts, _, tests) in groups.items()}
 total = 0
