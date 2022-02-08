@@ -159,6 +159,79 @@ python3 groups_loader.py
 test "$(cat task.cfg | sha256sum | awk '{print $1;}')" = '777219c4734667567e23198fd5b9251308ba2d4db71424c8b7aae173c53c95d5'
 ~ ~ ~
 \
+/read problem.xml.polygon before problem.xml/
+:problem.xml/
+<problem>
+	<judging>
+		<testset name="tests">
+			<groups>
+				<group feedback-policy="complete" name="samples" points="0.0" points-policy="complete-group"/>
+				<group feedback-policy="icpc" name="1" points="3.0" points-policy="complete-group">
+					<dependencies>
+						<dependency group="samples"/>
+					</dependencies>
+				</group>
+				<group feedback-policy="icpc" name="2" points="23.0" points-policy="complete-group">
+					<dependencies>
+						<dependency group="1"/>
+						<dependency group="samples"/>
+					</dependencies>
+				</group>
+				<group feedback-policy="icpc" name="3" points="16.0" points-policy="complete-group">
+					<dependencies>
+						<dependency group="samples"/>
+					</dependencies>
+				</group>
+				<group feedback-policy="icpc" name="4" points="58.0" points-policy="complete-group">
+					<dependencies>
+						<dependency group="1"/>
+						<dependency group="2"/>
+						<dependency group="3"/>
+						<dependency group="samples"/>
+					</dependencies>
+				</group>
+			</groups>
+		</testset>
+	</judging>
+</problem>
+~ ~ ~
+:problem.xml.polygon/
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<problem>
+    <judging>
+        <testset name="tests">
+            <tests>
+                <test group="0" points="0.0" sample="true"/>
+                <test group="1" points="1.0"/>
+                <test group="1" points="2.0"/>
+            </tests>
+            <groups>
+                <group feedback-policy="complete" name="0" points-policy="complete-group"/>
+                <group feedback-policy="complete" name="1" points-policy="complete-group"/>
+            </groups>
+        </testset>
+    </judging>
+</problem>
+~ ~ ~
+:task.cfg/
+CHECKER = ""
+INPUT = con
+OUTPUT = con
+MEM_LIMIT = 1073741824
+TIME_LIMIT = 1
+COUNT_BY = TEST
+NEW_GROUP = 1
+TESTS_BEGIN
+TESTS_END
+~ ~ ~
+!test/
+#!/bin/sh
+python3 groups_loader.py
+hash="$(sha256sum task.cfg | awk '{print $1;}')"
+echo "hash sum of the resulting file task.cfg:" && echo "$hash"
+test "$hash" = 1b28ea6441348956029cbf93c2cff375df139dbacc37c09538c9f046e6b1f6d3
+~ ~ ~
+\
 /read_info_from_tester.cfg/
 :task.cfg/
 CHECKER = ''
