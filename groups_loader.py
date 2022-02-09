@@ -39,8 +39,8 @@ def read_groups_from_testset_with_groups(testset):
         tests = [Test(i, t.attrib.get("points")) for i, t in enumerate(group)]
         points = points if any(t.points is None for t in tests) else "sum"
         tests = [Test(i, int(p) if p else None) for i, p in tests]
-        deps = set(map(int, group.attrib["require-groups"].split()))
-        groups[i] = Group(points, (deps | {0}) - {i}, tests)
+        deps = map(int, group.attrib["require-groups"].split())
+        groups[i] = Group(points, set(map(lambda g: g - 1, deps)), tests)
     return groups
 
 
@@ -144,6 +144,7 @@ with open("task.cfg") as cfg:
         for i, group in sorted(groups.items()):
             if group.points is None:
                 groups[i] = group._replace(points=int(points_for_groups.pop(0)))
+
 
 print_groups_table(groups)
 
