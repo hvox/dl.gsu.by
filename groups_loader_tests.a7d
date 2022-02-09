@@ -558,6 +558,64 @@ python3 groups_loader.py
 test "$(cat task.cfg | sha256sum | awk '{print $1;}')" = 12eebce0df163173b2a81490382b00ea66eed68117644cb6b14905800abd8a0c
 ~ ~ ~
 \
+/xml testset with groups/
+:problem.xml/
+<problem>
+	<testset name = "main">
+		<test-group comment = "0" group-bonus = "0" require-groups = ""> <test/> <test/> </test-group>
+		<test-group comment = "1" group-bonus = "10" require-groups = "">
+			<test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/>
+			<test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/>
+			<test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/>
+		</test-group>
+		<test-group comment = "2" group-bonus = "10" require-groups = "">
+			<test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/>
+			<test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/>
+			<test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/>
+			<test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/>
+			<test/> <test/> <test/> <test/>
+		</test-group>
+		<test-group comment = "3" group-bonus = "0" require-groups = "2">
+			<test points = "1"/> <test points = "1"/> <test points = "1"/> <test points = "1"/>
+			<test points = "1"/> <test points = "1"/> <test points = "1"/> <test points = "1"/>
+			<test points = "1"/> <test points = "1"/> <test points = "1"/> <test points = "1"/>
+			<test points = "1"/> <test points = "1"/> <test points = "1"/> <test points = "1"/>
+			<test points = "1"/> <test points = "1"/> <test points = "1"/> <test points = "1"/>
+			<test points = "1"/> <test points = "1"/> <test points = "1"/> <test points = "1"/>
+			<test points = "1"/> <test points = "1"/> <test points = "1"/> <test points = "1"/>
+			<test points = "1"/> <test points = "1"/>
+		</test-group>
+		<test-group comment = "4" group-bonus = "0" require-groups = "3">
+			<test points = "1"/> <test points = "1"/> <test points = "1"/> <test points = "1"/>
+			<test points = "1"/> <test points = "1"/> <test points = "1"/> <test points = "1"/>
+			<test points = "1"/> <test points = "1"/> <test points = "1"/> <test points = "1"/>
+			<test points = "1"/> <test points = "1"/> <test points = "1"/> <test points = "1"/>
+			<test points = "1"/> <test points = "1"/> <test points = "1"/> <test points = "1"/>
+			<test points = "1"/> <test points = "1"/> <test points = "1"/> <test points = "1"/>
+			<test points = "1"/> <test points = "1"/> <test points = "1"/> <test points = "1"/>
+			<test points = "1"/> <test points = "1"/> <test points = "1"/> <test points = "1"/>
+			<test points = "1"/> <test points = "1"/> <test points = "1"/> <test points = "1"/>
+			<test points = "1"/> <test points = "1"/> <test points = "1"/> <test points = "1"/>
+			<test points = "1"/> <test points = "1"/> <test points = "1"/> <test points = "1"/>
+			<test points = "1"/> <test points = "1"/> <test points = "1"/> <test points = "1"/>
+			<test points = "1"/> <test points = "1"/>
+		</test-group>
+	</testset>
+</problem>
+~ ~ ~
+:task.cfg/
+NEW_GROUP = 1
+TESTS_BEGIN
+TESTS_END
+~ ~ ~
+!test/
+#!/bin/sh
+python3 groups_loader.py
+hash="$(sha256sum task.cfg | awk '{print $1;}')"
+echo "hash sum of the resulting file task.cfg:" && echo "$hash"
+test "$hash" = 78a4f0eecba4d173c4ca128f9e03b2802609e91750f4470eb991d969307f7efb
+~ ~ ~
+\
 /xml_polygon/
 :problem.xml.polygon/
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
