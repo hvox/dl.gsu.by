@@ -558,6 +558,115 @@ python3 groups_loader.py
 test "$(cat task.cfg | sha256sum | awk '{print $1;}')" = 12eebce0df163173b2a81490382b00ea66eed68117644cb6b14905800abd8a0c
 ~ ~ ~
 \
+/xml big testset with groups/
+:problem.xml/
+<problem>
+	<testset name = "main">
+		<test-group comment = "0" group-bonus = "0" require-groups = ""> <test/> <test/> <test/> </test-group>
+		<test-group comment = "1" group-bonus = "4" require-groups = "">
+			<test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/>
+		</test-group>
+		<test-group comment = "2" group-bonus = "2" require-groups = "2">
+			<test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/>
+		</test-group>
+		<test-group comment = "3" group-bonus = "2" require-groups = "2 3">
+			<test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/>
+		</test-group>
+		<test-group comment = "4" group-bonus = "2" require-groups = "2 3 4">
+			<test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/>
+		</test-group>
+		<test-group comment = "5" group-bonus = "2" require-groups = "2 3 4 5">
+			<test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/>
+			<test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/>
+		</test-group>
+		<test-group comment = "6" group-bonus = "4" require-groups = "">
+			<test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/>
+			<test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/>
+		</test-group>
+		<test-group comment = "7" group-bonus = "4" require-groups = "7">
+			<test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/>
+			<test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/>
+		</test-group>
+		<test-group comment = "8" group-bonus = "4" require-groups = "7 8">
+			<test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/>
+			<test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/>
+		</test-group>
+		<test-group comment = "9" group-bonus = "4" require-groups = "1">
+			<test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/>
+			<test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/>
+			<test/> <test/> <test/> <test/> <test/>
+		</test-group>
+		<test-group comment = "10" group-bonus = "4" require-groups = "1 2 3 4 5 10">
+			<test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/>
+			<test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/>
+			<test/> <test/> <test/> <test/> <test/> <test/> <test/>
+		</test-group>
+		<test-group comment = "11" group-bonus = "4" require-groups = "1 10">
+			<test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/>
+			<test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/>
+			<test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/>
+		</test-group>
+		<test-group comment = "12" group-bonus = "4" require-groups = "1 2 10">
+			<test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/>
+			<test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/>
+			<test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/>
+		</test-group>
+		<test-group comment = "13" group-bonus = "4" require-groups = "1 2 3 10 13">
+			<test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/>
+			<test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/>
+			<test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/>
+		</test-group>
+		<test-group comment = "14" group-bonus = "7" require-groups = "1 2 3 4 7 10 13 14">
+			<test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/>
+			<test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/>
+		</test-group>
+		<test-group comment = "15" group-bonus = "7" require-groups = "1 2 3 4 7 10 13 14 15">
+			<test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/>
+			<test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/>
+		</test-group>
+		<test-group comment = "16" group-bonus = "8" require-groups = "1 2 3 4 5 7 8 10 11 12 13 14 15 16">
+			<test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/>
+			<test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/>
+		</test-group>
+		<test-group comment = "17" group-bonus = "8" require-groups = "1 2 3 4 5 7 8 10 11 12 13 14 15 16 17">
+			<test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/>
+			<test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/>
+		</test-group>
+		<test-group comment = "18" group-bonus = "6" require-groups = "1 2 3 4 5 7 8 10 11 12 13 14 15 16 17" >
+			<test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/>
+			<test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/>
+		</test-group>
+		<test-group comment = "19" group-bonus = "7" require-groups = "1 2 3 4 5 7 8 10 11 12 13 14 17 18 19">
+			<test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/>
+			<test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/>
+			<test/> <test/> <test/> <test/>
+		</test-group>
+		<test-group comment = "20" group-bonus = "7" require-groups = "1 2 3 4 7 8 11 12 13 14 15 16 17 18 19">
+			<test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/>
+			<test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/>
+			<test/> <test/> <test/>
+		</test-group>
+		<test-group comment = "21" group-bonus = "6" require-groups = "1 2 4 5 7 8 10 11 12 14 15 16 18 20 21">
+			<test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/>
+			<test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/>
+			<test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/> <test/>
+		</test-group>
+	</testset>
+</problem>
+~ ~ ~
+:task.cfg/
+NEW_GROUP = 1
+TESTS_BEGIN
+TESTS_END
+~ ~ ~
+!test/
+#!/bin/sh
+python3 groups_loader.py
+hash="$(sha256sum task.cfg | awk '{print $1;}')"
+echo "hash sum of the resulting file task.cfg:" && echo "$hash"
+test "$hash" = 2985ec249020f41fca5f5f12ea45857c8c447130939bee29955821c9ffc33fb3
+~ ~ ~
+\
 /xml testset with groups/
 :problem.xml/
 <problem>
