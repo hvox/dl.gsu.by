@@ -189,6 +189,81 @@ echo "hash sum of the resulting file task.cfg:" && echo "$hash"
 test "$hash" = f54232198bb7044e83a37c73da57958630a2bba2de5681c75bae76fd8d1fc34f
 ~ ~ ~
 \
+/problem.xml with absurd dependencies/
+:problem.xml/
+<problem>
+<testset name="tests">
+	<tests>
+		<test group="0" points="0.0"/> <test group="0" points="0.0"/> <test group="1" points="4.0"/>
+		<test group="1" points="0.0"/> <test group="1" points="0.0"/> <test group="1" points="0.0"/>
+		<test group="1" points="0.0"/> <test group="1" points="0.0"/> <test group="1" points="0.0"/>
+		<test group="1" points="0.0"/> <test group="2" points="5.0"/> <test group="2" points="0.0"/>
+		<test group="2" points="0.0"/> <test group="2" points="0.0"/> <test group="2" points="0.0"/>
+		<test group="3" points="8.0"/> <test group="3" points="0.0"/> <test group="3" points="0.0"/>
+		<test group="3" points="0.0"/> <test group="3" points="0.0"/> <test group="4" points="10.0"/>
+		<test group="4" points="0.0"/> <test group="4" points="0.0"/> <test group="4" points="0.0"/>
+		<test group="4" points="0.0"/> <test group="5" points="13.0"/> <test group="5" points="0.0"/>
+		<test group="5" points="0.0"/> <test group="5" points="0.0"/> <test group="5" points="0.0"/>
+		<test group="6" points="0.0"/> <test group="6" points="0.0"/> <test group="6" points="0.0"/>
+		<test group="6" points="0.0"/> <test group="6" points="0.0"/> <test group="6" points="14.0"/>
+		<test group="6" points="0.0"/> <test group="6" points="0.0"/> <test group="6" points="0.0"/>
+		<test group="6" points="0.0"/> <test group="7" points="11.0"/> <test group="7" points="0.0"/>
+		<test group="7" points="0.0"/> <test group="7" points="0.0"/> <test group="7" points="0.0"/>
+		<test group="7" points="0.0"/> <test group="7" points="0.0"/> <test group="7" points="0.0"/>
+		<test group="7" points="0.0"/> <test group="7" points="0.0"/> <test group="8" points="17.0"/>
+		<test group="8" points="0.0"/> <test group="8" points="0.0"/> <test group="8" points="0.0"/>
+		<test group="8" points="0.0"/> <test group="8" points="0.0"/> <test group="8" points="0.0"/>
+		<test group="8" points="0.0"/> <test group="8" points="0.0"/> <test group="8" points="0.0"/>
+		<test group="9" points="0.0"/> <test group="9" points="0.0"/> <test group="9" points="0.0"/>
+		<test group="9" points="0.0"/> <test group="9" points="0.0"/> <test group="9" points="18.0"/>
+		<test group="9" points="0.0"/> <test group="9" points="0.0"/> <test group="9" points="0.0"/>
+		<test group="9" points="0.0"/> <test group="9" points="0.0"/> <test group="9" points="0.0"/>
+		<test group="9" points="0.0"/> <test group="9" points="0.0"/> <test group="9" points="0.0"/>
+	</tests>
+	<groups>
+		<group name="0" points="0.0" points-policy="group"/>
+		<group name="1" points="4.0" points-policy="group"/>
+		<group name="2" points="5.0" points-policy="group">
+			<dependencies> <dependency group="1"/> </dependencies>
+		</group>
+		<group name="3" points="8.0" points-policy="group">
+			<dependencies> <dependency group="1"/> <dependency group="2"/> </dependencies>
+		</group>
+		<group name="4" points="10.0" points-policy="group">
+			<dependencies> <dependency group="1"/> <dependency group="2"/> <dependency group="3"/> </dependencies>
+		</group>
+		<group name="5" points="13.0" points-policy="group"/>
+		<group name="6" points="14.0" points-policy="group"/>
+		<group name="7" points="11.0" points-policy="group">
+			<dependencies> <dependency group="6"/> </dependencies>
+		</group>
+		<group name="8" points="17.0" points-policy="group">
+			<dependencies> <dependency group="6"/> <dependency group="7"/> </dependencies>
+		</group>
+		<group name="9" points="18.0" points-policy="group">
+			<dependencies>
+				<dependency group="1"/> <dependency group="2"/> <dependency group="3"/>
+				<dependency group="4"/> <dependency group="5"/> <dependency group="6"/>
+				<dependency group="7"/> <dependency group="8"/>
+			</dependencies>
+		</group>
+	</groups>
+</testset>
+</problem>
+~ ~ ~
+:task.cfg/
+NEW_GROUP = 1
+TESTS_BEGIN
+TESTS_END
+~ ~ ~
+!test/
+#!/bin/sh
+python3 groups_loader.py
+hash="$(sha256sum task.cfg | awk '{print $1;}')"
+echo "hash sum of the resulting file task.cfg:" && echo "$hash"
+test "$hash" = 61dde871d4bdd589a5c072a64572ec9a197c6c361f511fd66de39c716a31dda3
+~ ~ ~
+\
 /problem.xml with dependencies/
 :problem.xml/
 <problem>
