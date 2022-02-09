@@ -92,6 +92,21 @@ def read_groups_cfg(path):
     return groups
 
 
+def print_groups_table(groups):
+    has_deps = any(len(deps) for (_, deps, _) in groups.values())
+    header = " GROUPS \t POINTS \t TESTS  " + "\t DEPENDENCIES" * has_deps
+    print(header)
+    for group, (points, deps, tests) in groups.items():
+        row = f"group #{group}:\t{points} points\t{len(tests)} tests"
+        if has_deps:
+            deps_info = f"depends on {' '.join(map(str, deps))}"
+            deps_info = deps_info if deps else "no dependencies"
+            row = f"{row} \t{deps_info}"
+        print(row)
+    print(f"total points: {sum(points for points, _, _ in groups.values())}")
+    print(f"total tests: {sum(len(tests) for _, _, tests in groups.values())}")
+
+
 sources = map(Path, ("problem.xml.polygon", "problem.xml", "tester.cfg", "task.cfg"))
 for s in sources:
     print(f"reading {s}...")
@@ -129,19 +144,7 @@ with open("task.cfg") as cfg:
             if group.points is None:
                 groups[i] = group._replace(points=int(points_for_groups.pop(0)))
 
-dic = {i: (pts, len(tests)) for i, (pts, _, tests) in groups.items()}
-total = 0
-for group, (points, tests) in dic.items():
-    print(f"group #{group}:\t{points} points\t{tests} tests")
-    total += points
-print(f"total points: {total}")
-
-if any(len(deps) for (_, deps, _) in groups.values()):
-    print("\n -- DEPENDENCIES --")
-    for i, (_, deps, _) in groups.items():
-        deps = " ".join(str(d) for d in deps) if deps else "no dependencies"
-        print(f"group #{i}:\t{deps}")
-    print()
+print_groups_table(groups)
 
 if Path("task.cfg.old").is_file():
     print("found old task.cfg, copying skipped")
@@ -166,6 +169,7 @@ for line in open("task.cfg"):
 if not lines[-2].startswith("NEW_GROUP"):
     lines.insert(-1, "NEW_GROUP = 1\n")
 
+dic = {i: (pts, len(tests)) for i, (pts, _, tests) in groups.items()}
 i = 0
 while dic.get(i):
     points, tests = dic[i]
