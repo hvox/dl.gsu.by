@@ -94,10 +94,11 @@ def read_groups_cfg(path):
 
 def print_groups_table(groups):
     has_deps = any(len(deps) for (_, deps, _) in groups.values())
+    offset = int(not has_deps and groups[0].points and groups[0].points > 0)
     header = " GROUPS \t POINTS \t TESTS  " + "\t DEPENDENCIES" * has_deps
     print(header)
     for group, (points, deps, tests) in groups.items():
-        row = f"group #{group}:\t{points} points\t{len(tests)} tests"
+        row = f"group #{group + offset}:\t{points} points\t{len(tests)} tests"
         if has_deps:
             deps_info = f"depends on {' '.join(map(str, deps))}"
             deps_info = deps_info if deps else "no dependencies"
