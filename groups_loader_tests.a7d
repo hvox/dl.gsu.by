@@ -159,6 +159,36 @@ python3 groups_loader.py
 test "$(cat task.cfg | sha256sum | awk '{print $1;}')" = '777219c4734667567e23198fd5b9251308ba2d4db71424c8b7aae173c53c95d5'
 ~ ~ ~
 \
+/points per test and dependencies/
+:problem.xml/
+<problem>
+	<testset name = "main">
+		<test-group comment = "0" group-bonus = "0" require-groups = ""> <test/> <test/> </test-group>
+		<test-group comment = "1" group-bonus = "9" require-groups = "1"> <test/> <test/> </test-group>
+		<test-group comment = "2" group-bonus = "8" require-groups = "1 2"> <test/> <test/> </test-group>
+		<test-group comment = "3" group-bonus = "0" require-groups = "1 2 3" >
+			<test points = "1"/> <test points = "2"/> <test points = "3"/> <test points = "4"/>
+		</test-group>
+		<test-group comment = "4" group-bonus = "0" require-groups = "1 2 3 4" >
+			<test points = "5"/> <test points = "6"/> <test points = "7"/> <test points = "8"/>
+		</test-group>
+		<test-group comment = "5" group-bonus = "7" require-groups = "1 2 3 4 5"> <test/> <test/> </test-group>
+	</testset>
+</problem>
+~ ~ ~
+:task.cfg/
+NEW_GROUP = 1
+TESTS_BEGIN
+TESTS_END
+~ ~ ~
+!test/
+#!/bin/sh
+python3 groups_loader.py
+hash="$(sha256sum task.cfg | awk '{print $1;}')"
+echo "hash sum of the resulting file task.cfg:" && echo "$hash"
+test "$hash" = f54232198bb7044e83a37c73da57958630a2bba2de5681c75bae76fd8d1fc34f
+~ ~ ~
+\
 /read problem.xml.polygon before problem.xml/
 :problem.xml/
 <problem>
