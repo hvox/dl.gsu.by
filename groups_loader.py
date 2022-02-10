@@ -108,6 +108,40 @@ def print_groups_table(groups):
     print(f"total tests: {sum(len(tests) for _, _, tests in groups.values())}")
 
 
+def read_missing_group_info(groups):
+    with open("task.cfg") as cfg:
+        cfg = [l.strip().lower() for l in cfg.read().split("\n")]
+    cfg = [l for l in cfg if l.startswith('group1_points')]
+    if len(cfg) != 1:
+        return groups
+    group1_points = map(int, cfg[0].split("=")[1].strip().split(" "))
+    groups, old_groups = dict(), groups
+    for i, group in list(old_groups.items()):
+        if group.points == "sum":
+            tests = []
+            for test in group.tests:
+                if test.points is None:
+                    test = test._replace(points=next(group1_points))
+                test.append(test)
+            group = group._replace(tests=tests)
+        groups[i] = group
+    return groups
+
+
+def split_sum_groups(groups):
+    groups, old_groups, o2n = dict(), groups, defaultdict(set)
+    for i, group in old_groups.items():
+        if group.points == "sum":
+            deps = {g for d in group.dependencies for g in o2n[d]}
+            for test in group.tests:
+                o2n[i].add(len(groups))
+                groups[len(groups)] = Group(test.points, deps, [test])
+        else:
+            o2n[i].add(len(groups))
+            groups[len(groups)] = group
+    return groups
+
+
 sources = map(Path, ("problem.xml.polygon", "problem.xml", "tester.cfg", "task.cfg"))
 for s in sources:
     print(f"reading {s}...")
@@ -123,29 +157,8 @@ if not Path("task.cfg").is_file():
     print("error reading task.cfg: no such file")
     exit(1)
 
-# regroup sum-groups into separate groups
-groups, old_groups, o2n = dict(), groups, defaultdict(set)
-for i, group in old_groups.items():
-    if group.points == "sum":
-        deps = {g for d in group.dependencies for g in o2n[d]}
-        for test in group.tests:
-            o2n[i].add(len(groups))
-            groups[len(groups)] = Group(test.points, deps, [test])
-    else:
-        o2n[i].add(len(groups))
-        groups[len(groups)] = group
-
-# read points from "task.cfg" if there are any
-# GROUP1_POINTS = points_for_group_1 points_for_group_2 points_for_group_3 ...
-with open("task.cfg") as cfg:
-    cfg = [l.strip().lower() for l in cfg.read().split("\n")]
-    for line in [l for l in cfg if l.startswith('group1_points')]:
-        points_for_groups = line.split("=")[1].strip().split(" ")
-        for i, group in sorted(groups.items()):
-            if group.points is None:
-                groups[i] = group._replace(points=int(points_for_groups.pop(0)))
-
-
+groups = read_missing_group_info(groups)
+groups = split_sum_groups(groups)
 print_groups_table(groups)
 
 if Path("task.cfg.old").is_file():
