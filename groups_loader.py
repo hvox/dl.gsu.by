@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+assert tuple(map(int, __import__("platform").python_version_tuple())) >= (3, 5)
 import xml.etree.ElementTree as ET
 from collections import namedtuple, defaultdict
 from pathlib import Path
