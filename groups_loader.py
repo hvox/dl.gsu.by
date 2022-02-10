@@ -171,8 +171,8 @@ if not Path("task.cfg").is_file():
     exit(1)
 
 groups = read_missing_group_info(groups)
-groups = split_sum_groups(groups)
 print_groups_table(groups)
+groups = split_sum_groups(groups)
 
 if Path("task.cfg.old").is_file():
     print("found old task.cfg, copying skipped")
