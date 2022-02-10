@@ -101,6 +101,35 @@ def table2str(table):
     return "\n".join("\t".join(row) for row in rows)
 
 
+def is_increasing_with_delta(it, delta):
+    it = iter(it)
+    try:
+        curr = next(it)
+        while True:
+            nxt = next(it)
+            if nxt - curr != delta:
+                return False
+            curr = nxt
+    except StopIteration:
+        return True
+    except TypeError:
+        return False
+
+
+def list2str(it):
+    elements = list(it)
+    if is_increasing_with_delta(elements, 1):
+        if len(elements) < 3:
+            return ', '.join(map(str, elements))
+        return f"{elements[0]}..{elements[-1]}"
+    ranges = []
+    for cur, prev in zip(elements, [None] + elements):
+        if any(not isinstance(x, int) for x in (cur, prev)) or cur - prev != 1:
+            ranges.append([])
+        ranges[-1].append(cur)
+    return ", ".join(list2str(rng) for rng in ranges)
+
+
 def groups_table_to_tsv(groups):
     has_deps = any(len(deps) for (_, deps, _) in groups.values())
     offset = int(not has_deps and groups[0].points and groups[0].points > 0)
@@ -113,14 +142,15 @@ def groups_table_to_tsv(groups):
             ][bool(points) + (points == "sum")]
         points = sum(t.points for t in tests) if points == "sum" else points
         row = [group, points, len(tests)]
-        row += [", ".join(str(d) for d in deps)] if has_deps else []
+        row += [list2str(range(total_tests, total_tests + len(tests)))]
+        row += has_deps * [list2str(d or "N" for d in deps)]
         row += [policy]
         groups_table.append(row)
         total_points += points
         total_tests += len(tests)
-    header = ["group", "points", "tests"]
+    header = ["group", "points", "tests", "range"]
     header += ["depends on"] * has_deps + ["score policy"]
-    total = ["total:", total_points, total_tests] + [""] * has_deps + [""]
+    total = ["total:", total_points, total_tests] + [""] * (2 + has_deps)
     return table2str([header] + groups_table + [total])
 
 
