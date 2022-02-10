@@ -100,7 +100,7 @@ def table2str(table):
     return "\n".join("\t".join(row) for row in rows)
 
 
-def print_groups_table(groups):
+def groups_table_to_tsv(groups):
     has_deps = any(len(deps) for (_, deps, _) in groups.values())
     offset = int(not has_deps and groups[0].points and groups[0].points > 0)
     groups_table, total_points, total_tests = [], 0, 0
@@ -120,7 +120,7 @@ def print_groups_table(groups):
     header = ["group", "points", "tests"]
     header += ["depends on"] * has_deps + ["score policy"]
     total = ["total:", total_points, total_tests] + [""] * has_deps + [""]
-    print(table2str([header] + groups_table + [total]))
+    return table2str([header] + groups_table + [total])
 
 
 def read_missing_group_info(groups):
@@ -173,7 +173,9 @@ if not Path("task.cfg").is_file():
     exit(1)
 
 groups = read_missing_group_info(groups)
-print_groups_table(groups)
+table = groups_table_to_tsv(groups)
+print(table)
+Path("table_with_group_statistics.tsv").write_text(table)
 groups = split_sum_groups(groups)
 
 if Path("task.cfg.old").is_file():
