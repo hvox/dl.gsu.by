@@ -92,20 +92,33 @@ def read_groups_cfg(path):
     return groups
 
 
+def table2str(table):
+    rows = [[str(cell) for cell in row] for row in table]
+    widths = [max(len(row[c]) for row in rows) for c in range(len(rows[0]))]
+    widths = [(w // 8) * 8 for w in widths]
+    rows = [[c.ljust(w) for c, w in zip(row, widths)] for row in rows]
+    return "\n".join("\t".join(row) for row in rows)
+
+
 def print_groups_table(groups):
     has_deps = any(len(deps) for (_, deps, _) in groups.values())
     offset = int(not has_deps and groups[0].points and groups[0].points > 0)
-    header = " GROUPS \t POINTS \t TESTS  " + "\t DEPENDENCIES" * has_deps
-    print(header)
+    header = ["group", "points"] + ["depends on"] * has_deps + ["score policy"]
+    groups_table, total_points, total_tests = [header], 0, 0
     for group, (points, deps, tests) in groups.items():
-        row = f"group #{group + offset}:\t{points} points\t{len(tests)} tests"
-        if has_deps:
-            deps_info = f"depends on {' '.join(map(str, deps))}"
-            deps_info = deps_info if deps else "no dependencies"
-            row = f"{row} \t{deps_info}"
-        print(row)
-    print(f"total points: {sum(points for points, _, _ in groups.values())}")
-    print(f"total tests: {sum(len(tests) for _, _, tests in groups.values())}")
+        policy = [
+                "no points are scored for passing this group",
+                "points are scored if all tests are passed",
+                "all tests are independently scored",
+            ][bool(points) + (points == "sum")]
+        points = sum(t.points for t in tests) if points == "sum" else points
+        row = [group, points] + [", ".join(str(d) for d in deps)] * has_deps
+        groups_table.append(row + [policy])
+        total_points += points
+        total_tests += len(tests)
+    print(table2str(groups_table))
+    print(f"total points: {total_points}")
+    print(f"total tests: {total_tests}")
 
 
 def read_missing_group_info(groups):
