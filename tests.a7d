@@ -558,6 +558,28 @@ python3 groups_loader.py
 test "$(cat task.cfg | sha256sum | awk '{print $1;}')" = 12eebce0df163173b2a81490382b00ea66eed68117644cb6b14905800abd8a0c
 ~ ~ ~
 \
+/tester.cfg without test count/
+:task.cfg/
+NEW_GROUP = 1
+TESTS_BEGIN
+TESTS_END
+~ ~ ~
+!test/
+#!/bin/sh
+python3 groups_loader.py || exit 42
+hash="$(sha256sum task.cfg | awk '{print $1;}')"
+echo "hash sum of the resulting file task.cfg:" && echo "$hash"
+test "$hash" = 6a13b4bc9f3f1841a201348ce10a93ef68f91df94323b90dcbe4ff5b59de4f61
+~ ~ ~
+:tester.cfg/
+<
+1, 2
+3
+4, 5
+6
+>
+~ ~ ~
+\
 /xml big testset with groups/
 :problem.xml/
 <problem>
