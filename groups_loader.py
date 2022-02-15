@@ -11,6 +11,13 @@ Group = namedtuple("Group", "points dependencies tests")
 Test = namedtuple("Test", "index points")
 
 
+def get(lst, index, default_value):
+    try:
+        return lst[index]
+    except IndexError:
+        return default_value
+
+
 def read_groups_from_testset_with_tests(testset):
     tests, groups = testset.find("./tests"), testset.find("./groups") or []
     tests_info = [(g2i(t.attrib.get("group")), t) for t in tests]
@@ -61,8 +68,8 @@ def read_groups_xml(path):
 def read_groups_cfg(path):
     # read group info in format:
     # <
-    # group_1_points, group_1_tests
-    # group_2_points, group_2_tests
+    # group_1_points[, group_1_tests]
+    # group_2_points[, group_2_tests]
     # ...
     # >
     #
@@ -88,7 +95,8 @@ def read_groups_cfg(path):
         return groups
     info_start, info_end, groups = lines.index("<"), lines.index(">"), {}
     for i, line in enumerate(lines[(info_start + 1) : info_end]):
-        points, tests = map(int, line.strip().split(","))
+        group_info = list(map(int, line.strip().split(",")))
+        points, tests = group_info[0], get(group_info, 1, 1)
         groups[i] = Group(points, {}, [Test(None, None) for _ in range(tests)])
     return groups
 
