@@ -143,7 +143,7 @@ def groups_table_to_tsv(groups):
         points = sum(t.points for t in tests) if points == "sum" else points
         row = [group, points, len(tests)]
         row += [list2str(range(total_tests + 1, total_tests + len(tests) + 1))]
-        row += has_deps * [list2str(d or "N" for d in deps)]
+        row += has_deps * [list2str(deps)]
         row += [policy]
         groups_table.append(row)
         total_points += points
