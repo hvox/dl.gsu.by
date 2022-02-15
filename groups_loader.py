@@ -83,16 +83,20 @@ def read_groups_cfg(path):
         return None
     with path.open("r") as cfg:
         lines = [l.strip().lower() for l in cfg.read().strip().split("\n")]
-    if '>' not in lines:
-        info_start, info_end, groups = lines.index("tests_begin"), lines.index("tests_end"), {}
-        tests = 1
+    groups = {}
+    if ">" not in lines:
+        info_start = lines.index("tests_begin")
+        info_end = lines.index("tests_end")
+        tests_count = 1
         for i, points in enumerate(lines[(info_start + 1) : info_end]):
-            if not points.startswith('-'):
-                groups[len(groups)] = Group(None if int(points) else 0, {}, [Test(None) for _ in range(tests)])
-                tests = 0
-            tests += 1
+            if not points.startswith("-"):
+                points = None if int(points) != 0 else 0
+                tests = [Test(None) for _ in range(tests_count)]
+                groups[len(groups)] = Group(points, {}, tests)
+                tests_count = 0
+            tests_count += 1
         return groups
-    info_start, info_end, groups = lines.index("<"), lines.index(">"), {}
+    info_start, info_end = lines.index("<"), lines.index(">")
     for i, line in enumerate(lines[(info_start + 1) : info_end]):
         group_info = list(map(int, line.strip().split(",")))
         points, tests = group_info[0], get(group_info, 1, 1)
@@ -127,7 +131,7 @@ def list2str(it):
     elements = list(it)
     if is_increasing_with_delta(elements, 1):
         if len(elements) < 3:
-            return ', '.join(map(str, elements))
+            return ", ".join(map(str, elements))
         return f"{elements[0]}..{elements[-1]}"
     ranges = []
     for cur, prev in zip(elements, [None] + elements):
@@ -143,10 +147,10 @@ def groups_table_to_tsv(groups):
     groups_table, total_points, total_tests = [], 0, 0
     for group, (points, deps, tests) in groups.items():
         policy = [
-                "no points are scored for passing this group",
-                "points are scored if all tests are passed",
-                "all tests are independently scored",
-            ][bool(points) + (points == "sum")]
+            "no points are scored for passing this group",
+            "points are scored if all tests are passed",
+            "all tests are independently scored",
+        ][bool(points) + (points == "sum")]
         points = sum(t.points for t in tests) if points == "sum" else points
         row = [group, points, len(tests)]
         row += [list2str(range(total_tests + 1, total_tests + len(tests) + 1))]
@@ -164,7 +168,7 @@ def groups_table_to_tsv(groups):
 def read_missing_group_info(groups):
     with open("task.cfg") as cfg:
         cfg = [l.strip().lower() for l in cfg.read().split("\n")]
-    cfg = [l for l in cfg if l.startswith('group1_points')]
+    cfg = [l for l in cfg if l.startswith("group1_points")]
     if len(cfg) != 1:
         return groups
     group1_points = map(int, cfg[0].split("=")[1].strip().split(" "))
@@ -195,10 +199,13 @@ def split_sum_groups(groups):
     return groups
 
 
-sources = map(Path, ("problem.xml.polygon", "problem.xml", "tester.cfg", "task.cfg"))
-for s in sources:
+sources = ["problem.xml.polygon", "problem.xml", "tester.cfg", "task.cfg"]
+for s in map(Path, sources):
     print(f"reading {s}...")
-    groups = read_groups_xml(s) if s.suffix in [".xml", ".polygon"] else read_groups_cfg(s)
+    if s.suffix in [".xml", ".polygon"]:
+        groups = read_groups_xml(s)
+    else:
+        groups = read_groups_cfg(s)
     if groups:
         break
     print(f"{s} not found")
