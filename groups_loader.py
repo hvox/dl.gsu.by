@@ -179,8 +179,10 @@ def read_missing_group_info(groups):
             for test in group.tests:
                 if test.points is None:
                     test = test._replace(points=next(group1_points))
-                test.append(test)
+                tests.append(test)
             group = group._replace(tests=tests)
+        elif group.points is None:
+            group = group._replace(points=next(group1_points))
         groups[i] = group
     return groups
 
