@@ -8,7 +8,7 @@ from pathlib import Path
 # g2i converts group name to group number
 g2i = lambda g: 0 if g == "samples" or g is None else int(g.split(".")[0])
 Group = namedtuple("Group", "points dependencies tests")
-Test = namedtuple("Test", "index points")
+Test = namedtuple("Test", "points")
 
 
 def get(lst, index, default_value):
@@ -31,11 +31,10 @@ def read_groups_from_testset_with_tests(testset):
             groups[group] = Group(points=policy, dependencies=deps, tests=[])
         points = test_info.attrib.get("points")
         points = int(float(points)) if points else None
-        groups[group].tests.append(Test(test_index, points))
+        groups[group].tests.append(Test(points))
     for i, (points, _, tests) in groups.items():
         if points == "all":
-            if all(p is not None for (_, p) in tests):
-                points = sum(p for (_, p) in tests)
+            points = sum(p for (p,) in tests)
             groups[i] = groups[i]._replace(points=points)
     return groups
 
@@ -44,9 +43,9 @@ def read_groups_from_testset_with_groups(testset):
     groups_info, groups = {g2i(g.attrib["comment"]): g for g in testset}, {}
     for i, group in groups_info.items():
         points = int(group.attrib["group-bonus"])
-        tests = [Test(i, t.attrib.get("points")) for i, t in enumerate(group)]
-        points = points if any(t.points is None for t in tests) else "sum"
-        tests = [Test(i, int(p) if p else None) for i, p in tests]
+        tests = [test.attrib.get("points") for test in group]
+        points = points if any(t is None for t in tests) else "sum"
+        tests = list(map(lambda test: Test(int(test) if test else None), tests))
         deps = map(int, group.attrib["require-groups"].split())
         groups[i] = Group(points, set(map(lambda g: g - 1, deps)), tests)
     return groups
@@ -89,7 +88,7 @@ def read_groups_cfg(path):
         tests = 1
         for i, points in enumerate(lines[(info_start + 1) : info_end]):
             if not points.startswith('-'):
-                groups[len(groups)] = Group(None if int(points) else 0, {}, [Test(None, None) for _ in range(tests)])
+                groups[len(groups)] = Group(None if int(points) else 0, {}, [Test(None) for _ in range(tests)])
                 tests = 0
             tests += 1
         return groups
@@ -97,7 +96,7 @@ def read_groups_cfg(path):
     for i, line in enumerate(lines[(info_start + 1) : info_end]):
         group_info = list(map(int, line.strip().split(",")))
         points, tests = group_info[0], get(group_info, 1, 1)
-        groups[i] = Group(points, {}, [Test(None, None) for _ in range(tests)])
+        groups[i] = Group(points, {}, [Test(None) for _ in range(tests)])
     return groups
 
 
