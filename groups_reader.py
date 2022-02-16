@@ -44,8 +44,17 @@ def read_groups_from_testset_with_groups(testset):
         tests = [test.attrib.get("points") for test in group]
         points = points if all(t is None or t == '0' for t in tests) else "sum"
         tests = list(map(lambda test: Test(int(test) if test else None), tests))
-        deps = map(int, group.attrib["require-groups"].split())
-        groups[i] = Group(points, set(map(lambda g: g - 1, deps)), tests)
+        deps = group.attrib.get("require-groups")
+        if deps is not None:
+            deps = set(map(lambda g: g - 1, map(int, deps.split())))
+        else:
+            require_previous = group.attrib["require-previous"] == "true"
+            if require_previous:
+                deps = {dep for dep in groups[i - 1].dependencies}
+                deps.add(i - 1)
+            else:
+                deps = set()
+        groups[i] = Group(points, deps, tests)
     return groups
 
 
