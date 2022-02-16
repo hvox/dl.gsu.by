@@ -38,7 +38,7 @@ def read_groups_from_testset_with_tests(testset):
 
 
 def read_groups_from_testset_with_groups(testset):
-    groups_info, groups = {g2i(g.attrib["comment"]): g for g in testset}, {}
+    groups_info, groups = {i: g for i, g in enumerate(testset)}, {}
     for i, group in groups_info.items():
         points = int(group.attrib["group-bonus"])
         tests = [test.attrib.get("points") for test in group]
