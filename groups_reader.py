@@ -42,7 +42,7 @@ def read_groups_from_testset_with_groups(testset):
     for i, group in groups_info.items():
         points = int(group.attrib["group-bonus"])
         tests = [test.attrib.get("points") for test in group]
-        points = points if any(t is None for t in tests) else "sum"
+        points = points if all(t is None or t == '0' for t in tests) else "sum"
         tests = list(map(lambda test: Test(int(test) if test else None), tests))
         deps = map(int, group.attrib["require-groups"].split())
         groups[i] = Group(points, set(map(lambda g: g - 1, deps)), tests)
