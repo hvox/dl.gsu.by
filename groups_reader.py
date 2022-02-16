@@ -48,8 +48,7 @@ def read_groups_from_testset_with_groups(testset):
         if deps is not None:
             deps = set(map(lambda g: g - 1, map(int, deps.split())))
         else:
-            require_previous = group.attrib["require-previous"] == "true"
-            if require_previous:
+            if group.attrib.get("require-previous", "false") == "true":
                 deps = {dep for dep in groups[i - 1].dependencies}
                 deps.add(i - 1)
             else:
