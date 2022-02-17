@@ -37,7 +37,7 @@ def list2str(it):
 
 def groups_table_to_tsv(groups):
     has_deps = any(len(deps) for (_, deps, _) in groups.values())
-    offset = int(not has_deps and groups[0].points and groups[0].points > 0)
+    offset = int(isinstance(groups[0].points, int) and groups[0].points > 0)
     groups_table, total_points, total_tests = [], 0, 0
     for group, (points, deps, tests) in groups.items():
         policy = [
@@ -46,9 +46,9 @@ def groups_table_to_tsv(groups):
             "all tests are independently scored",
         ][bool(points) + (points == "sum")]
         points = sum(t.points for t in tests) if points == "sum" else points
-        row = [group, points, len(tests)]
+        row = [group + offset, points, len(tests)]
         row += [list2str(range(total_tests + 1, total_tests + len(tests) + 1))]
-        row += has_deps * [list2str(deps)]
+        row += has_deps * [list2str(map(lambda g: g + offset, deps))]
         row += [policy]
         groups_table.append(row)
         total_points += points
