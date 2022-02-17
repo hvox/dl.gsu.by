@@ -37,9 +37,13 @@ def read_groups_from_testset_with_tests(testset):
     return groups
 
 
-def read_groups_from_testset_with_groups(testset):
-    groups_info, groups = {i: g for i, g in enumerate(testset)}, {}
-    for i, group in groups_info.items():
+def read_groups_from_testsets_with_groups(preliminary, testsets):
+    groups = {}
+    if preliminary:
+        groups[0] = Group(0, set(), [Test(0)] * len(list(preliminary)))
+    groups_info = {i: g for i, g in enumerate(g for t in testsets for g in t)}
+    for _, group in groups_info.items():
+        i = len(groups)
         points = int(group.attrib["group-bonus"])
         tests = [test.attrib.get("points") for test in group]
         points = points if all(t is None or t == '0' for t in tests) else "sum"
@@ -61,13 +65,12 @@ def read_groups_xml(path):
     if not path.is_file():
         return None
     xml_tree = ET.parse(path)
-    tsts = xml_tree.getroot().findall(".//testset[@name='tests']")
-    grps = xml_tree.getroot().findall(".//testset[@name='main']")
-    groups = read_groups_from_testset_with_tests(tsts[0]) if tsts else None
-    groups = read_groups_from_testset_with_groups(grps[0]) if grps else groups
-    if groups is None:
-        raise Exception("error: no testset with tests was found")
-    return groups
+    tests = xml_tree.getroot().findall(".//testset[@name='tests']")
+    if tests:
+        return read_groups_from_testset_with_tests(tests[0])
+    preliminary = xml_tree.getroot().find(".//testset[@name='preliminary']")
+    groups = xml_tree.getroot().findall(".//testset[@name='main']")
+    return read_groups_from_testsets_with_groups(preliminary, groups)
 
 
 def read_groups_cfg(path):
