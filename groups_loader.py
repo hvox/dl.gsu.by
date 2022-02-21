@@ -43,7 +43,7 @@ for line in open("task.cfg"):
     if after_end:
         lines_end.append(line)
 
-if not lines[-2].startswith("NEW_GROUP"):
+if len(lines) < 2 or not lines[-2].startswith("NEW_GROUP"):
     lines.insert(-1, "NEW_GROUP = 1\n")
 
 dic = {i: (pts, len(tests)) for i, (pts, _, tests) in groups.items()}
