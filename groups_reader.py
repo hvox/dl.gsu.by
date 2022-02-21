@@ -116,6 +116,15 @@ def read_groups_cfg(path):
     return groups
 
 
+def guess_groups_based_on_tests_directory(tests_directory):
+    groups = {}
+    for group in tests_directory.iterdir():
+        number_of_tests = sum(1 for test_file in group.iterdir()) // 2
+        group = 0 if group.stem == 'samples' else int(group.stem[7:])
+        groups[group] = Group(group, set(), [Test(None)] * number_of_tests)
+    return groups
+
+
 def read_missing_group_info(groups):
     with open("task.cfg") as cfg:
         cfg = [l.strip().lower() for l in cfg.read().split("\n")]

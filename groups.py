@@ -36,6 +36,8 @@ class Groups:
     @staticmethod
     def load(source):
         source, groups = Path(source), None
+        if not groups and source.is_dir():
+            groups = groups_reader.guess_groups_based_on_tests_directory(source)
         if not groups and source.suffix in [".xml", ".polygon"]:
             groups = groups_reader.read_groups_xml(source)
         if not groups and source.suffix in [".cfg"]:
