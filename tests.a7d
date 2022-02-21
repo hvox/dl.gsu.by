@@ -869,6 +869,25 @@ test "$hash" = 6a13b4bc9f3f1841a201348ce10a93ef68f91df94323b90dcbe4ff5b59de4f61
 >
 ~ ~ ~
 \
+/tests directory/
+!test/
+#!/bin/sh
+python3 groups_loader.py || exit 42
+hash="$(sha256sum task.cfg | awk '{print $1;}')"
+echo "hash sum of the resulting file task.cfg:" && echo "$hash"
+test "$hash" = 0ed21f1a87a82b4e38ffa8316728818029696ef19185e969213c9e94ef06689c
+~ ~ ~
+/tests/
+/samples/
+:in/
+hi
+~ ~ ~
+:out/
+hi
+~ ~ ~
+\
+\
+\
 /xml big testset with groups/
 :problem.xml/
 <problem>
