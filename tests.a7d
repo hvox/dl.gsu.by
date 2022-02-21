@@ -516,6 +516,75 @@ echo "hash sum of the resulting file task.cfg:" && echo "$hash"
 test "$hash" = 8d2ff34d56cb643cbd1c451e688b13da2d90115c8f11f15e30907e5989748878
 ~ ~ ~
 \
+/problem.xml with redundant zero-group/
+:problem.xml/
+<problem >
+	<testset name ="preliminary">
+		<test points ="0" comment="Тест из примера"/>
+		<test points ="0" comment="Тест из примера"/>
+	</testset>
+	<testset name = "main">
+		<test-group
+			group-bonus ="0"
+			require-previous ="false"
+		>
+			<test points="0"/>
+			<test points="0"/>
+		</test-group>
+		<test-group
+			comment ="blablabla"
+			group-bonus ="17"
+			require-previous ="false"
+		>
+			<test points="0"/>
+			<test points="0"/>
+			<test points="0"/>
+			<test points="0"/>
+		</test-group>
+		<test-group
+			comment ="tututt tu u toehr nohra wqgfuyj"
+			group-bonus ="21"
+			require-previous ="true"
+		>
+			<test points="0"/>
+			<test points="0"/>
+			<test points="0"/>
+		</test-group>
+		<test-group
+			comment ="jhewgtre"
+			group-bonus ="23"
+			require-previous ="true"
+		>
+			<test points="0"/>
+			<test points="0"/>
+			<test points="0"/>
+		</test-group>
+		<test-group
+			comment ="Four"
+			group-bonus ="39"
+			require-previous ="true"
+		>
+			<test points="0"/>
+			<test points="0"/>
+			<test points="0"/>
+			<test points="0"/>
+		</test-group>
+	</testset>
+</problem>
+~ ~ ~
+:task.cfg/
+new_group = 1
+tests_begin
+tests_end
+~ ~ ~
+!test/
+#!/bin/sh
+python3 groups_loader.py || exit 42
+hash="$(sha256sum task.cfg | awk '{print $1;}')"
+echo "hash sum of the resulting file task.cfg:" && echo "$hash"
+test "$hash" = 95bf9105bd7a628cd1a2a3be4280531c2a4611de454f23a5b04ab7701fbeb752
+~ ~ ~
+\
 /problem.xml without dependencies/
 :problem.xml/
 <problem>
