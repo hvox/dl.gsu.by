@@ -9,14 +9,14 @@ if not Path("task.cfg").is_file():
     print("creating empty task.cfg")
     Path("task.cfg").write_text("tests_begin\ntests_end\n")
 
-sources = ["problem.xml.polygon", "problem.xml", "tester.cfg", "task.cfg"]
+sources = ["problem.xml.polygon", "problem.xml", "tester.cfg", "task.cfg", "tests"]
 for source in map(Path, sources):
     groups = Groups.load(source)
     if groups:
         break
     print(f"{source} not found")
 else:
-    print("error reading groups info from xml/cfg files")
+    print("error reading groups info from xml/cfg files or tests directory")
     exit(1)
 
 print(groups)
