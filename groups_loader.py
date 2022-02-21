@@ -65,7 +65,7 @@ except ValueError:
     deps_beg, deps_end = len(lines), len(lines) + 1
     lines += ["deps_begin\n", "deps_end\n"]
 cfg_deps = []
-for group, (_, deps, _) in groups.items():
+for group, (_, deps, _) in sorted(groups.items()):
     if len(deps) > 0:
         cfg_deps.append(f"{group}: {' '.join(str(d) for d in deps)}\n")
 if cfg_deps:
