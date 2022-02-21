@@ -660,6 +660,31 @@ echo "hash sum of the resulting file task.cfg:" && echo "$hash"
 test "$hash" = ef0c399a1424ce1180d2c959f3516b0151f3b273f78bb44aa4e6bb3b6e209d9c
 ~ ~ ~
 \
+/problem.xml without groups/
+:problem.xml/
+<problem>
+	<testset name ="preliminary">
+		<test points ="0" comment="Тест из примера"/>
+		<test points ="0" comment="Тест из примера"/>
+	</testset>
+	<testset name = "main">
+                <test points="1"/> <test points="2"/> <test points="3"/>
+	</testset>
+</problem>
+~ ~ ~
+:task.cfg/
+new_group = 1
+tests_begin
+tests_end
+~ ~ ~
+!test/
+#!/bin/sh
+python3 groups_loader.py || exit 42
+hash="$(sha256sum task.cfg | awk '{print $1;}')"
+echo "hash sum of the resulting file task.cfg:" && echo "$hash"
+test "$hash" = 21279135f09483c9a1fcee3c59eeaa365b6e55a737c985f54f9a872e92169ccf
+~ ~ ~
+\
 /read problem.xml.polygon before problem.xml/
 :problem.xml/
 <problem>
