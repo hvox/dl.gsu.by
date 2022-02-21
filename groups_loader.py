@@ -4,6 +4,11 @@ assert tuple(map(int, __import__("platform").python_version_tuple())) >= (3, 5)
 from groups import Groups
 from pathlib import Path
 
+if not Path("task.cfg").is_file():
+    print("can't read task.cfg: no such file")
+    print("creating empty task.cfg")
+    Path("task.cfg").write_text("tests_begin\ntests_end\n")
+
 sources = ["problem.xml.polygon", "problem.xml", "tester.cfg", "task.cfg"]
 for source in map(Path, sources):
     groups = Groups.load(source)
@@ -12,10 +17,6 @@ for source in map(Path, sources):
     print(f"{source} not found")
 else:
     print("error reading groups info from xml/cfg files")
-    exit(1)
-
-if not Path("task.cfg").is_file():
-    print("error reading task.cfg: no such file")
     exit(1)
 
 print(groups)
