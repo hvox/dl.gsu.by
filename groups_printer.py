@@ -39,7 +39,7 @@ def groups_table_to_tsv(groups):
     has_deps = any(len(deps) for (_, deps, _) in groups.values())
     offset = int(isinstance(groups[0].points, int) and groups[0].points > 0)
     groups_table, total_points, total_tests = [], 0, 0
-    for group, (points, deps, tests) in groups.items():
+    for group, (points, deps, tests) in sorted(groups.items()):
         policy = [
             "no points are scored for passing this group",
             "points are scored if all tests are passed",
