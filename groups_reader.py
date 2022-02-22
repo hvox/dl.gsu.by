@@ -124,7 +124,7 @@ def guess_groups_based_on_tests_directory(tests_directory):
     for group in tests_directory.iterdir():
         number_of_tests = sum(1 for test_file in group.iterdir()) // 2
         group = 0 if group.stem == 'samples' else int(group.stem[7:])
-        groups[group] = Group(group, set(), [Test(None)] * number_of_tests)
+        groups[group] = Group(group, set(range(1, group)), [Test(None)] * number_of_tests)
     return groups
 
 
