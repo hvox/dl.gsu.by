@@ -58,17 +58,20 @@ lines += lines_end
 
 # update lines from DEPS_BEGIN to DEPS_END in task.cfg
 lines_lower = [l.strip().lower() for l in lines]
+taskcfg_has_deps_section = True
 try:
     deps_beg = lines_lower.index("deps_begin")
     deps_end = lines_lower.index("deps_end")
+    taskcfg_has_deps_section = (deps_end - deps_beg) > 1
 except ValueError:
+    taskcfg_has_deps_section = False
     deps_beg, deps_end = len(lines), len(lines) + 1
     lines += ["deps_begin\n", "deps_end\n"]
 cfg_deps = []
 for group, (_, deps, _) in sorted(groups.items()):
     if len(deps) > 0:
         cfg_deps.append(f"{group}: {' '.join(str(d) for d in deps)}\n")
-if cfg_deps:
+if cfg_deps and not taskcfg_has_deps_section:
     lines[(deps_beg + 1) : deps_end] = cfg_deps
 else:
     lines[deps_beg : deps_end + 1] = cfg_deps
