@@ -1,5 +1,6 @@
 import groups_reader
 import groups_printer
+import groups_tools
 from pathlib import Path
 from collections import namedtuple, defaultdict
 
@@ -8,7 +9,7 @@ Group = namedtuple("Group", "points dependencies tests")
 
 class Groups:
     def __init__(self, groups):
-        self.groups = groups
+        self.groups = groups_tools.fix_group_enumeraction(groups)
 
     def to_dict(self):
         return self.groups
