@@ -5,7 +5,7 @@ a7d8473
 python3 groups_loader.py || exit 42
 hash="$(sha256sum task.cfg | awk '{print $1;}')"
 echo "hash sum of the resulting file task.cfg:" && echo "$hash"
-test "$hash" = 66caea46519f74c82b746918618b239571781ffe624123042cb4fc2a6779e96f
+test "$hash" = 55cb94e0a99cac5e545a068ffaac14518d1b9c008b4e090ea3b58ddafd0d0c56
 ~ ~ ~
 /tests/
 /samples/
