@@ -51,7 +51,8 @@ def groups_table_to_tsv(groups):
         row += has_deps * [list2str(map(lambda g: g + offset, deps))]
         row += [policy]
         groups_table.append(row)
-        total_points += points
+        if points is not None:
+            total_points += points
         total_tests += len(tests)
     header = ["group", "points", "tests", "range"]
     header += ["depends on"] * has_deps + ["score policy"]
