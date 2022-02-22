@@ -1,4 +1,47 @@
 a7d8473
+/big tests directory/
+!test/
+#!/bin/sh
+python3 groups_loader.py || exit 42
+hash="$(sha256sum task.cfg | awk '{print $1;}')"
+echo "hash sum of the resulting file task.cfg:" && echo "$hash"
+test "$hash" = 66caea46519f74c82b746918618b239571781ffe624123042cb4fc2a6779e96f
+~ ~ ~
+/tests/
+/samples/
+:in/
+hi
+~ ~ ~
+:out/
+hi
+~ ~ ~
+\
+/subtask1/
+:1/
+~ ~ ~
+:2/
+~ ~ ~
+:3/
+~ ~ ~
+:4/
+~ ~ ~
+\
+/subtask2/
+:1/
+~ ~ ~
+:2/
+~ ~ ~
+:3/
+~ ~ ~
+:4/
+~ ~ ~
+:5/
+~ ~ ~
+:6/
+~ ~ ~
+\
+\
+\
 /dependencies/
 :problem.xml/
 <problem>
