@@ -52,7 +52,7 @@ while dic.get(i):
     points, tests = dic[i]
     for j in range(tests - 1):
         lines.append("-1\n")
-    lines.append(str(int(round(points))) + "\n")
+    lines.append(str(int(round(999999 if points is None else points))) + "\n")
     i += 1
 lines += lines_end
 
