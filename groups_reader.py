@@ -136,7 +136,7 @@ def read_missing_group_info(groups):
         return groups
     group1_points = map(int, cfg[0].split("=")[1].strip().split(" "))
     groups, old_groups = dict(), groups
-    for i, group in list(old_groups.items()):
+    for i, group in list(sorted(old_groups.items())):
         if group.points == "sum":
             tests = []
             for test in group.tests:
