@@ -9,7 +9,7 @@ if not Path("task.cfg").is_file():
     print("creating empty task.cfg")
     Path("task.cfg").write_text("tests_begin\ntests_end\n")
 
-sources = ["problem.xml.polygon", "problem.xml", "tester.cfg", "tests"]
+sources = ["problem.xml.polygon", "problem.xml", "tester.cfg", "tests", "task.cfg"]
 for source in map(Path, sources):
     groups = Groups.load(source)
     if groups:
