@@ -71,10 +71,11 @@ cfg_deps = []
 for group, (_, deps, _) in sorted(groups.items()):
     if len(deps) > 0:
         cfg_deps.append(f"{group}: {' '.join(str(d) for d in deps)}\n")
-if cfg_deps and not taskcfg_has_deps_section:
-    lines[(deps_beg + 1) : deps_end] = cfg_deps
-else:
-    lines[deps_beg : deps_end + 1] = cfg_deps
+if not taskcfg_has_deps_section:
+    if cfg_deps:
+        lines[(deps_beg + 1) : deps_end] = cfg_deps
+    else:
+        lines[deps_beg : deps_end + 1] = cfg_deps
 
 print("rewriting task.cfg")
 with open("task.cfg", "w") as f:
