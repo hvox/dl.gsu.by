@@ -68,9 +68,10 @@ except ValueError:
     deps_beg, deps_end = len(lines), len(lines) + 1
     lines += ["deps_begin\n", "deps_end\n"]
 cfg_deps = []
+offset = (groups[0].points != 0)
 for group, (_, deps, _) in sorted(groups.items()):
     if len(deps) > 0:
-        cfg_deps.append(f"{group}: {' '.join(str(d) for d in deps)}\n")
+        cfg_deps.append(f"{group + offset}: {' '.join(str(d + offset) for d in deps)}\n")
 if not taskcfg_has_deps_section:
     if cfg_deps:
         lines[(deps_beg + 1) : deps_end] = cfg_deps
