@@ -956,6 +956,63 @@ hi
 \
 \
 \
+/tests directory without zero group/
+!test/
+#!/bin/sh
+python3 groups_loader.py || exit 42
+hash="$(sha256sum task.cfg | awk '{print $1;}')"
+echo "hash sum of the resulting file task.cfg:" && echo "$hash"
+test "$hash" = 470f0dfb42414f6dc5d50fb283f3e9736b598dee08ce398121e6250efdf1bdd8
+~ ~ ~
+/tests/
+/subtask1/
+:1/
+~ ~ ~
+:2/
+~ ~ ~
+:3/
+~ ~ ~
+:4/
+~ ~ ~
+\
+/subtask2/
+:1/
+~ ~ ~
+:2/
+~ ~ ~
+:3/
+~ ~ ~
+:4/
+~ ~ ~
+:5/
+~ ~ ~
+:6/
+~ ~ ~
+\
+/subtask3/
+:1/
+~ ~ ~
+:10/
+~ ~ ~
+:2/
+~ ~ ~
+:3/
+~ ~ ~
+:4/
+~ ~ ~
+:5/
+~ ~ ~
+:6/
+~ ~ ~
+:7/
+~ ~ ~
+:8/
+~ ~ ~
+:9/
+~ ~ ~
+\
+\
+\
 /xml big testset with groups/
 :problem.xml/
 <problem>
