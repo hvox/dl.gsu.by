@@ -104,21 +104,33 @@ bool is_correct_coloring(vector<int> colors, vector<tuple<int, int, char>> obsta
 	}
 	for (auto [x_start, y_start, type_start] : obstacles) {
 		for (int direction0 = 0; direction0 < 4; direction0++) {
-			set<tuple<int, int, int>> visited;
-			array<int, 4> counter = {0, 0, 0, 0};
+			vector<tuple<int, int, int, int>> visited;
+			bool looped = true;
 			int direction = direction0;
 			int x0 = x_start;
 			int y0 = y_start;
 			char type = type_start;
-			while (visited.find({x0, y0, direction}) == visited.end()) {
+			while (true) {
+				bool found = false;
+				for (int i = 0; i < visited.size(); i++) {
+					auto [x, y, dir, c] = visited[i];
+					if (x0 == x && y0 == y && direction == dir) {
+						found = true;
+						break;
+					}
+				}
+				if (found) {
+					visited.push_back({x0, y0, direction, obstacles_to_colors[{x0, y0, type}]});
+					looped = true;
+					break;
+				}
 				if (all_visited.find({x0, y0, direction}) != all_visited.end()) {
-					counter[0] = counter[1] = counter[2] = counter[3] = 420;
+					looped = false;
 					break;
 				}
 				if (debug_mode) cout << " - " << x0 << " " << y0 << " " << direction << endl;
-				visited.insert({x0, y0, direction});
 				all_visited.insert({x0, y0, direction});
-				counter[obstacles_to_colors[{x0, y0, type}]]++;
+				visited.push_back({x0, y0, direction, obstacles_to_colors[{x0, y0, type}]});
 				int target_found = false;
 				int target_x, target_y, target_type;
 				// directions:
@@ -165,7 +177,7 @@ bool is_correct_coloring(vector<int> colors, vector<tuple<int, int, char>> obsta
 						break;
 				}
 				if (not target_found) {
-					for (int i = 0; i < 4; i++) counter[i] = 0;
+					looped = false;
 					break;
 				}
 				switch (direction) {
@@ -187,11 +199,20 @@ bool is_correct_coloring(vector<int> colors, vector<tuple<int, int, char>> obsta
 				y0 = target_y;
 				type = target_type;
 			}
-			if (x0 != x_start or y0 != y_start or type != type_start)
+			if (not looped)
 				continue;
+			int counter[4] = {0, 0, 0, 0};
+			auto [x_loop, y_loop, direction_loop, col_loop] = visited[visited.size() - 1];
+			counter[col_loop] += 1;
+			for (int i = visited.size() - 2; i >= 0; i--) {
+				cout << i << endl;
+				auto [x, y, dir, c] = visited[i];
+				if (x_loop == x && y_loop == y && direction_loop == dir)
+					break;
+				counter[c] += 1;
+			}
 			for (int i = 0; i < 4; i++) if (debug_mode) cout << " " << counter[i]; if (debug_mode) cout << endl;
-			if (counter[0] == counter[1] && counter[0] == counter[2] && counter[0] == counter[3])
-				continue;
+			if (counter[0] == counter[1] && counter[0] == counter[2] && counter[0] == counter[3]) continue;
 			if (debug_mode) cout << "false" << endl;
 			return false;
 		}
@@ -213,6 +234,10 @@ void checker(ifstream &task_inp, ifstream &correct_out, ifstream &user_out) {
 	IFNOT(user_out >> colors[0], "Failed to read user output.");
 	IF(jury_ans and (colors[0] == -1), "Jury found the coloring and the user did not.");
 	IF(not jury_ans and (colors[0] != -1), "The coloring does not satisfy the condition.");
+	if (not jury_ans) {
+		save_result("OK", max_points);
+		return;
+	}
 	for (int i = 1; i < n; i++) IFNOT(user_out >> colors[i], "Failed to read user output.");
 
 	IFNOT(is_correct_coloring(colors, obstacles), "The coloring does not satisfy the condition");
