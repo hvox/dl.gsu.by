@@ -96,29 +96,31 @@ bool is_correct_coloring(vector<int> colors, vector<tuple<int, int, char>> obsta
 	map<tuple<int, int, int>, int> obstacles_to_colors;
 	for (int i = 0; i < colors.size(); i++)
 		obstacles_to_colors[obstacles[i]] = colors[i] - 1;
-	map<int, set<tuple<int, char>>> rows;
-	map<int, set<tuple<int, char>>> cols;
+	map<int, set<int>> rows;
+	map<int, set<int>> cols;
+	map<int, set<int>> rrows;
+	map<int, set<int>> rcols;
+	map<tuple<int, int>, char> types;
 	for (auto [x, y, type] : obstacles) {
-		rows[y].insert({x, type});
-		cols[x].insert({y, type});
+		rows[y].insert(x);
+		cols[x].insert(y);
+		rows[y].insert(-x);
+		cols[x].insert(-y);
+		types[{x, y}] = type;
 	}
 	for (auto [x_start, y_start, type_start] : obstacles) {
 		for (int direction0 = 0; direction0 < 4; direction0++) {
+			if (all_visited.find({x_start, y_start, direction0}) != all_visited.end()) continue;
 			vector<tuple<int, int, int, int>> visited;
+			set<tuple<int, int, int>> cached;
 			bool looped = true;
 			int direction = direction0;
 			int x0 = x_start;
 			int y0 = y_start;
 			char type = type_start;
 			while (true) {
-				bool found = false;
-				for (int i = 0; i < visited.size(); i++) {
-					auto [x, y, dir, c] = visited[i];
-					if (x0 == x && y0 == y && direction == dir) {
-						found = true;
-						break;
-					}
-				}
+				if (debug_mode) cout << "pos: " << x0 << " " << y0 << " " << direction << endl;
+				bool found = (cached.find({x0, y0, direction}) != cached.end());
 				if (found) {
 					visited.push_back({x0, y0, direction, obstacles_to_colors[{x0, y0, type}]});
 					looped = true;
@@ -131,6 +133,7 @@ bool is_correct_coloring(vector<int> colors, vector<tuple<int, int, char>> obsta
 				if (debug_mode) cout << " - " << x0 << " " << y0 << " " << direction << endl;
 				all_visited.insert({x0, y0, direction});
 				visited.push_back({x0, y0, direction, obstacles_to_colors[{x0, y0, type}]});
+				cached.insert({x0, y0, direction});
 				int target_found = false;
 				int target_x, target_y, target_type;
 				// directions:
@@ -139,47 +142,49 @@ bool is_correct_coloring(vector<int> colors, vector<tuple<int, int, char>> obsta
 				// 2 left
 				// 3 down
 				switch(direction) {
-					case 0:
-						for (auto [x, type] : rows[y0]) {
-							int y = y0; if (x <= x0) continue;
-							if (not target_found or (x < target_x)) {
+					case 0: {
+							auto iter = rows[y0].upper_bound(x0);
+							if (iter != rows[y0].end()) {
+								target_x = *iter;
+								target_y = y0;
 								target_found = true;
-								target_x = x; target_y = y; target_type = type;
 							}
 						}
 						break;
-					case 1:
-						for (auto [y, type] : cols[x0]) {
-							int x = x0; if (y <= y0) continue;
-							if (not target_found or (y < target_y)) {
+					case 1: {
+							auto iter = cols[x0].upper_bound(y0);
+							if (iter != cols[y0].end()) {
+								target_x = x0;
+								target_y = *iter;
 								target_found = true;
-								target_x = x; target_y = y; target_type = type;
 							}
 						}
 						break;
-					case 2:
-						for (auto [x, type] : rows[y0]) {
-							int y = y0; if (x >= x0) continue;
-							if (not target_found or (x > target_x)) {
+					case 2: {
+							auto iter = rrows[y0].upper_bound(-x0);
+							if (iter != rrows[y0].end()) {
+								target_x = -(*iter);
+								target_y = y0;
 								target_found = true;
-								target_x = x; target_y = y; target_type = type;
 							}
 						}
 						break;
-					case 3:
-						for (auto [y, type] : cols[x0]) {
-							int x = x0; if (y >= y0) continue;
-							if (not target_found or (y > target_y)) {
+					case 3: {
+							auto iter = rcols[x0].lower_bound(-y0);
+							if (iter != rcols[x0].end()) {
+								target_x = x0;
+								target_y = -(*iter);
 								target_found = true;
-								target_x = x; target_y = y; target_type = type;
 							}
 						}
 						break;
 				}
+				target_type = types[{target_x, target_y}];
 				if (not target_found) {
 					looped = false;
 					break;
 				}
+				if (debug_mode) cout << "target found: " << target_x << " " << target_y << " " << (char)target_type << endl;
 				switch (direction) {
 					case 0: // right
 						direction = (target_type == '/') ? 1 : 3;
