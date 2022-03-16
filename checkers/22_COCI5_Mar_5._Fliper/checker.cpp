@@ -2,6 +2,8 @@
 #pragma GCC optimize("-Ofast")
 using namespace std;
 
+const bool debug_mode = false;
+
 const int64_t min_int64 = 0x8000000000000000;
 
 #define ASSERT(code) { if (not(code)) return false; }
@@ -90,7 +92,7 @@ set<T> arr2set(vector<T> &array) {
 }
 
 bool is_correct_coloring(vector<int> colors, vector<tuple<int, int, char>> obstacles) {
-	set<tuple<int, int, int>> visited;
+	set<tuple<int, int, int>> all_visited;
 	map<tuple<int, int, int>, int> obstacles_to_colors;
 	for (int i = 0; i < colors.size(); i++)
 		obstacles_to_colors[obstacles[i]] = colors[i] - 1;
@@ -102,13 +104,20 @@ bool is_correct_coloring(vector<int> colors, vector<tuple<int, int, char>> obsta
 	}
 	for (auto [x_start, y_start, type_start] : obstacles) {
 		for (int direction0 = 0; direction0 < 4; direction0++) {
+			set<tuple<int, int, int>> visited;
 			array<int, 4> counter = {0, 0, 0, 0};
 			int direction = direction0;
 			int x0 = x_start;
 			int y0 = y_start;
 			char type = type_start;
 			while (visited.find({x0, y0, direction}) == visited.end()) {
+				if (all_visited.find({x0, y0, direction}) != all_visited.end()) {
+					counter[0] = counter[1] = counter[2] = counter[3] = 420;
+					break;
+				}
+				if (debug_mode) cout << " - " << x0 << " " << y0 << " " << direction << endl;
 				visited.insert({x0, y0, direction});
+				all_visited.insert({x0, y0, direction});
 				counter[obstacles_to_colors[{x0, y0, type}]]++;
 				int target_found = false;
 				int target_x, target_y, target_type;
@@ -173,14 +182,17 @@ bool is_correct_coloring(vector<int> colors, vector<tuple<int, int, char>> obsta
 						direction = (target_type == '/') ? 2 : 0;
 						break;
 				}
+				if (debug_mode) cout << "next direction: " << direction << endl;
 				x0 = target_x;
 				y0 = target_y;
 				type = target_type;
 			}
 			if (x0 != x_start or y0 != y_start or type != type_start)
 				continue;
+			for (int i = 0; i < 4; i++) if (debug_mode) cout << " " << counter[i]; if (debug_mode) cout << endl;
 			if (counter[0] == counter[1] && counter[0] == counter[2] && counter[0] == counter[3])
 				continue;
+			if (debug_mode) cout << "false" << endl;
 			return false;
 		}
 	}
