@@ -1,6 +1,4 @@
 #!/usr/bin/env python3
-
-assert tuple(map(int, __import__("platform").python_version_tuple())) >= (3, 5)
 from groups import Groups
 from pathlib import Path
 
@@ -68,7 +66,7 @@ except ValueError:
     deps_beg, deps_end = len(lines), len(lines) + 1
     lines += ["deps_begin\n", "deps_end\n"]
 cfg_deps = []
-offset = (groups[0].points != 0)
+offset = groups[0].points != 0
 for group, (_, deps, _) in sorted(groups.items()):
     if len(deps) > 0:
         cfg_deps.append(f"{group + offset}: {' '.join(str(d + offset) for d in deps)}\n")
