@@ -2,7 +2,7 @@ a7d8473
 /big tests directory/
 !test/
 #!/bin/sh
-python3 groups_loader.py || exit 42
+python3.4 groups_loader.py || exit 42
 hash="$(sha256sum task.cfg | awk '{print $1;}')"
 echo "hash sum of the resulting file task.cfg:" && echo "$hash"
 test "$hash" = 55cb94e0a99cac5e545a068ffaac14518d1b9c008b4e090ea3b58ddafd0d0c56
@@ -158,7 +158,7 @@ DEPS_END
 ~ ~ ~
 !test/
 #!/bin/sh
-python3 groups_loader.py
+python3.4 groups_loader.py
 test "$(cat task.cfg | sha256sum | awk '{print $1;}')" = 9717ce33d0a5a249e93cc078582fb62ba114853d1b06cd5f19542b156b191220
 ~ ~ ~
 \
@@ -198,7 +198,7 @@ TESTS_END
 ~ ~ ~
 !test/
 #!/bin/sh
-python3 groups_loader.py
+python3.4 groups_loader.py
 test "$(cat task.cfg | sha256sum | awk '{print $1;}')" = '777219c4734667567e23198fd5b9251308ba2d4db71424c8b7aae173c53c95d5'
 ~ ~ ~
 \
@@ -226,7 +226,7 @@ TESTS_END
 ~ ~ ~
 !test/
 #!/bin/sh
-python3 groups_loader.py
+python3.4 groups_loader.py
 hash="$(sha256sum task.cfg | awk '{print $1;}')"
 echo "hash sum of the resulting file task.cfg:" && echo "$hash"
 test "$hash" = f54232198bb7044e83a37c73da57958630a2bba2de5681c75bae76fd8d1fc34f
@@ -301,7 +301,7 @@ TESTS_END
 ~ ~ ~
 !test/
 #!/bin/sh
-python3 groups_loader.py
+python3.4 groups_loader.py
 hash="$(sha256sum task.cfg | awk '{print $1;}')"
 echo "hash sum of the resulting file task.cfg:" && echo "$hash"
 test "$hash" = 61dde871d4bdd589a5c072a64572ec9a197c6c361f511fd66de39c716a31dda3
@@ -367,7 +367,7 @@ tests_end
 ~ ~ ~
 !test/
 #!/bin/sh
-python3 groups_loader.py || exit 42
+python3.4 groups_loader.py || exit 42
 hash="$(sha256sum task.cfg | awk '{print $1;}')"
 echo "hash sum of the resulting file task.cfg:" && echo "$hash"
 test "$hash" = 95bf9105bd7a628cd1a2a3be4280531c2a4611de454f23a5b04ab7701fbeb752
@@ -499,7 +499,7 @@ TESTS_END
 ~ ~ ~
 !test/
 #!/bin/sh
-python3 groups_loader.py
+python3.4 groups_loader.py
 hash="$(sha256sum task.cfg | awk '{print $1;}')"
 echo "hash sum of the resulting file task.cfg:" && echo "$hash"
 test "$hash" = d04a83dc64e27269d514250b29b57f9ce4ef4d0ddcb82c15449aada6f335e54a
@@ -553,7 +553,7 @@ tests_end
 ~ ~ ~
 !test/
 #!/bin/sh
-python3 groups_loader.py || exit 42
+python3.4 groups_loader.py || exit 42
 hash="$(sha256sum task.cfg | awk '{print $1;}')"
 echo "hash sum of the resulting file task.cfg:" && echo "$hash"
 test "$hash" = 8d2ff34d56cb643cbd1c451e688b13da2d90115c8f11f15e30907e5989748878
@@ -622,7 +622,7 @@ tests_end
 ~ ~ ~
 !test/
 #!/bin/sh
-python3 groups_loader.py || exit 42
+python3.4 groups_loader.py || exit 42
 hash="$(sha256sum task.cfg | awk '{print $1;}')"
 echo "hash sum of the resulting file task.cfg:" && echo "$hash"
 test "$hash" = 95bf9105bd7a628cd1a2a3be4280531c2a4611de454f23a5b04ab7701fbeb752
@@ -672,7 +672,7 @@ tests_end
 ~ ~ ~
 !test/
 #!/bin/sh
-python3 groups_loader.py || exit 42
+python3.4 groups_loader.py || exit 42
 hash="$(sha256sum task.cfg | awk '{print $1;}')"
 echo "hash sum of the resulting file task.cfg:" && echo "$hash"
 test "$hash" = 6d5f4ac95570e1f025e6b8910a906a39cc137f1ecc29112451bfaf5255a1f804
@@ -697,7 +697,7 @@ tests_end
 ~ ~ ~
 !test/
 #!/bin/sh
-python3 groups_loader.py || exit 42
+python3.4 groups_loader.py || exit 42
 hash="$(sha256sum task.cfg | awk '{print $1;}')"
 echo "hash sum of the resulting file task.cfg:" && echo "$hash"
 test "$hash" = ef0c399a1424ce1180d2c959f3516b0151f3b273f78bb44aa4e6bb3b6e209d9c
@@ -722,7 +722,7 @@ tests_end
 ~ ~ ~
 !test/
 #!/bin/sh
-python3 groups_loader.py || exit 42
+python3.4 groups_loader.py || exit 42
 hash="$(sha256sum task.cfg | awk '{print $1;}')"
 echo "hash sum of the resulting file task.cfg:" && echo "$hash"
 test "$hash" = 21279135f09483c9a1fcee3c59eeaa365b6e55a737c985f54f9a872e92169ccf
@@ -795,7 +795,7 @@ TESTS_END
 ~ ~ ~
 !test/
 #!/bin/sh
-python3 groups_loader.py
+python3.4 groups_loader.py
 hash="$(sha256sum task.cfg | awk '{print $1;}')"
 echo "hash sum of the resulting file task.cfg:" && echo "$hash"
 test "$hash" = 1b28ea6441348956029cbf93c2cff375df139dbacc37c09538c9f046e6b1f6d3
@@ -816,7 +816,7 @@ TESTS_END
 ~ ~ ~
 !test/
 #!/bin/sh
-python3 groups_loader.py
+python3.4 groups_loader.py
 test "$(cat task.cfg | sha256sum | awk '{print $1;}')" = 0a8f73f05a183283e4e0a1b6dbe80354c46cb6748f51dc80afde461772b86a8f
 ~ ~ ~
 :tester.cfg/
@@ -843,7 +843,7 @@ TESTS_END
 ~ ~ ~
 !test/
 #!/bin/sh
-python3 groups_loader.py
+python3.4 groups_loader.py
 test "$(cat task.cfg | sha256sum | awk '{print $1;}')" = 5ee307a0dee0ed57156235d696ee6ddd3640e5533878b1c13ac4040cad4b255f
 ~ ~ ~
 :tester.cfg/
@@ -886,7 +886,7 @@ TESTS_END
 ~ ~ ~
 !test/
 #!/bin/sh
-python3 groups_loader.py
+python3.4 groups_loader.py
 test "$(cat task.cfg | sha256sum | awk '{print $1;}')" = 12eebce0df163173b2a81490382b00ea66eed68117644cb6b14905800abd8a0c
 ~ ~ ~
 \
@@ -909,7 +909,7 @@ tests_end
 ~ ~ ~
 !test/
 #!/bin/sh
-python3 groups_loader.py || exit 42
+python3.4 groups_loader.py || exit 42
 hash="$(sha256sum task.cfg | awk '{print $1;}')"
 echo "hash sum of the resulting file task.cfg:" && echo "$hash"
 test "$hash" = 292250f06988857db046d1c53611cfda5f3491bbb662614227f190c7b9bb793b
@@ -923,7 +923,7 @@ TESTS_END
 ~ ~ ~
 !test/
 #!/bin/sh
-python3 groups_loader.py || exit 42
+python3.4 groups_loader.py || exit 42
 hash="$(sha256sum task.cfg | awk '{print $1;}')"
 echo "hash sum of the resulting file task.cfg:" && echo "$hash"
 test "$hash" = 6a13b4bc9f3f1841a201348ce10a93ef68f91df94323b90dcbe4ff5b59de4f61
@@ -940,7 +940,7 @@ test "$hash" = 6a13b4bc9f3f1841a201348ce10a93ef68f91df94323b90dcbe4ff5b59de4f61
 /tests directory/
 !test/
 #!/bin/sh
-python3 groups_loader.py || exit 42
+python3.4 groups_loader.py || exit 42
 hash="$(sha256sum task.cfg | awk '{print $1;}')"
 echo "hash sum of the resulting file task.cfg:" && echo "$hash"
 test "$hash" = 0ed21f1a87a82b4e38ffa8316728818029696ef19185e969213c9e94ef06689c
@@ -959,7 +959,7 @@ hi
 /tests directory without zero group/
 !test/
 #!/bin/sh
-python3 groups_loader.py || exit 42
+python3.4 groups_loader.py || exit 42
 hash="$(sha256sum task.cfg | awk '{print $1;}')"
 echo "hash sum of the resulting file task.cfg:" && echo "$hash"
 test "$hash" = 470f0dfb42414f6dc5d50fb283f3e9736b598dee08ce398121e6250efdf1bdd8
@@ -1116,7 +1116,7 @@ TESTS_END
 ~ ~ ~
 !test/
 #!/bin/sh
-python3 groups_loader.py
+python3.4 groups_loader.py
 hash="$(sha256sum task.cfg | awk '{print $1;}')"
 echo "hash sum of the resulting file task.cfg:" && echo "$hash"
 test "$hash" = 2985ec249020f41fca5f5f12ea45857c8c447130939bee29955821c9ffc33fb3
@@ -1174,7 +1174,7 @@ TESTS_END
 ~ ~ ~
 !test/
 #!/bin/sh
-python3 groups_loader.py
+python3.4 groups_loader.py
 hash="$(sha256sum task.cfg | awk '{print $1;}')"
 echo "hash sum of the resulting file task.cfg:" && echo "$hash"
 test "$hash" = 78a4f0eecba4d173c4ca128f9e03b2802609e91750f4470eb991d969307f7efb
@@ -1212,7 +1212,7 @@ TESTS_END
 ~ ~ ~
 !test/
 #!/bin/sh
-python3 groups_loader.py
+python3.4 groups_loader.py
 test "$(cat task.cfg | sha256sum | awk '{print $1;}')" = 1b28ea6441348956029cbf93c2cff375df139dbacc37c09538c9f046e6b1f6d3
 ~ ~ ~
 \
