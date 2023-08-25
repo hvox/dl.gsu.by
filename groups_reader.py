@@ -70,7 +70,7 @@ def read_groups_from_testsets_with_groups(preliminary, testsets):
 def read_groups_xml(path):
     if not path.is_file():
         return None
-    xml_tree = ET.parse(path if tuple(map(int, __import__("platform").python_version_tuple())) >= (3, 10) else str(path))
+    xml_tree = ET.parse(str(path))
     tests = xml_tree.getroot().findall(".//testset[@name='tests']")
     if tests:
         return read_groups_from_testset_with_tests(tests[0])
